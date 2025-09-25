@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 Horror Trivia - Halloween Mini CTF</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #ff6b6b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ff6b6b;
+            text-shadow: 0 0 10px #ff6b6b;
+        }
+
+        .subtitle {
+            color: #ffd93d;
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            color: #a8e6cf;
+            text-decoration: none;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            color: #ffd93d;
+        }
+
+        .game-container {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .trivia-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid #ff6b6b;
+            width: 100%;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 4px solid #ffd93d;
+            display: none;
+        }
+
+        .question-card.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-number {
+            color: #ffd93d;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            color: #a8e6cf;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #666;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #ff6b6b;
+        }
+
+        .option:hover {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: #ffd93d;
+            transform: translateY(-2px);
+        }
+
+        .option.correct {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4caf50;
+            color: #4caf50;
+        }
+
+        .option.incorrect {
+            background: rgba(244, 67, 54, 0.3);
+            border-color: #f44336;
+            color: #f44336;
+        }
+
+        .option.selected {
+            background: rgba(255, 217, 61, 0.2);
+            border-color: #ffd93d;
+            color: #ffd93d;
+        }
+
+        .feedback {
+            min-height: 40px;
+            margin-top: 15px;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            width: 100%;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffd93d;
+        }
+
+        .stat-label {
+            color: #a8e6cf;
+            font-size: 0.9rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: 2px solid #ff6b6b;
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background: rgba(255, 107, 107, 0.4);
+            border-color: #ffd93d;
+            color: #ffd93d;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn.primary {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4caf50;
+            color: #4caf50;
+        }
+
+        .btn.primary:hover {
+            background: rgba(76, 175, 80, 0.5);
+            border-color: #66bb6a;
+            color: #66bb6a;
+        }
+
+        .message {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            min-height: 30px;
+        }
+
+        .success {
+            color: #4caf50;
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+
+        .error {
+            color: #f44336;
+        }
+
+        .flag {
+            color: #ffd93d;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid #ffd93d;
+            border-radius: 10px;
+            background: rgba(255, 217, 61, 0.1);
+            display: none;
+            text-align: center;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px currentColor; }
+            to { text-shadow: 0 0 15px currentColor; }
+        }
+
+        .instructions {
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #a8e6cf;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #ffd93d);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .category-indicator {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #ffd93d;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 15px;
+            }
+
+            .trivia-container {
+                padding: 20px;
+            }
+
+            .question-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="../index.html" class="back-link">← Back to Challenges</a>
+        <h1>🧠 Horror Trivia</h1>
+        <div class="subtitle">Test your knowledge of Addams Family & Horror Movies!</div>
+    </div>
+
+    <div class="instructions">
+        <p>🎃 Answer trivia questions about the Addams Family and classic horror movies</p>
+        <p>👻 Each correct answer reveals part of the flag</p>
+        <p>🧟‍♂️ Get enough correct to unlock the complete flag!</p>
+        <p>⚰️ Choose wisely - you can only answer each question once!</p>
+    </div>
+
+    <div class="game-container">
+        <div class="stats-container">
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="correctAnswers">0</div>
+                <div class="stat-label">Correct</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="totalQuestions">10</div>
+                <div class="stat-label">Total</div>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+
+        <div class="trivia-container">
+            <div class="category-indicator" id="categoryIndicator">Addams Family Trivia</div>
+
+            <div id="questionContainer">
+                <!-- Questions will be dynamically inserted here -->
+            </div>
+
+            <div class="controls">
+                <button class="btn" id="submitBtn" onclick="submitAnswer()" disabled>Submit Answer</button>
+                <button class="btn" id="nextBtn" onclick="nextQuestion()" style="display: none;">Next Question</button>
+                <button class="btn" onclick="showHint()">💡 Hint</button>
+            </div>
+
+            <div class="feedback" id="feedback"></div>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <div class="flag" id="flag">
+            <h3>🎉 Congratulations! You completed the Horror Trivia! 🎉</h3>
+            <p><strong>Flag:</strong> <code id="dynamicFlag">SecDSM{computing_flag...}</code></p>
+            <p>You've proven your mastery of spooky knowledge!</p>
+        </div>
+    </div>
+
+    <script>
+        // Trivia questions data
+        const triviaQuestions = [
+            // Addams Family Questions (0-4)
+            {
+                category: "Addams Family",
+                question: "What is the name of the Addams Family's butler?",
+                options: ["Lurch", "Thing", "Cousin Itt", "Uncle Fester"],
+                correct: 0,
+                hint: "He's the tall, silent one who answers the door"
+            },
+            {
+                category: "Addams Family",
+                question: "What instrument does Uncle Fester play?",
+                options: ["Tuba", "Violin", "Piano", "Ukulele"],
+                correct: 3,
+                hint: "It's a small stringed instrument from Hawaii"
+            },
+            {
+                category: "Addams Family",
+                question: "What is Wednesday Addams' favorite hobby?",
+                options: ["Reading", "Torturing her brother", "Playing with dolls", "Cooking"],
+                correct: 1,
+                hint: "She loves making her brother Pugsley suffer"
+            },
+            {
+                category: "Addams Family",
+                question: "What does Cousin Itt drive?",
+                options: ["A hearse", "A motorcycle", "A carriage", "A sports car"],
+                correct: 2,
+                hint: "It's pulled by horses and very old-fashioned"
+            },
+            {
+                category: "Addams Family",
+                question: "What is the Addams Family mansion called?",
+                options: ["The Haunted House", "The Addams Estate", "The Spooky Manor", "None of the above"],
+                correct: 3,
+                hint: "It's never given a specific name in the original series"
+            },
+
+            // Horror Movie Questions (5-9)
+            {
+                category: "Horror Movies",
+                question: "In 'The Shining', what is the name of the hotel?",
+                options: ["Overlook Hotel", "Bates Motel", "Hill House", "Amityville House"],
+                correct: 0,
+                hint: "It's isolated in the mountains with a hedge maze"
+            },
+            {
+                category: "Horror Movies",
+                question: "Who directed 'Psycho'?",
+                options: ["Steven Spielberg", "Alfred Hitchcock", "John Carpenter", "George Romero"],
+                correct: 1,
+                hint: "He's known as the 'Master of Suspense'"
+            },
+            {
+                category: "Horror Movies",
+                question: "What is the name of the demon in 'The Exorcist'?",
+                options: ["Beelzebub", "Pazuzu", "Mephisto", "Lucifer"],
+                correct: 1,
+                hint: "It's an ancient Mesopotamian demon"
+            },
+            {
+                category: "Horror Movies",
+                question: "In 'Halloween', what is Michael Myers' mask originally from?",
+                options: ["Star Trek", "Captain Kirk", "William Shatner", "A cheap costume store"],
+                correct: 3,
+                hint: "It was bought from a discount store for $1.98"
+            },
+            {
+                category: "Horror Movies",
+                question: "What year was 'Night of the Living Dead' released?",
+                options: ["1968", "1978", "1958", "1988"],
+                correct: 0,
+                hint: "It was George Romero's first zombie film"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswers = 0;
+        let selectedOption = null;
+        let gameCompleted = false;
+
+        // Simple hash function for flag generation
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return Math.abs(hash).toString(16).toUpperCase().padStart(8, '0');
+        }
+
+        // Generate flag from answers
+        function generateFlagFromAnswers() {
+            const answersString = triviaQuestions.map(q => q.correct).join('');
+            const hash = simpleHash(answersString);
+            return `SecDSM{horror_trivia_${hash}}`;
+        }
+
+        // Initialize game
+        function initGame() {
+            showQuestion(0);
+            updateStats();
+        }
+
+        // Show specific question
+        function showQuestion(index) {
+            const question = triviaQuestions[index];
+            const container = document.getElementById('questionContainer');
+
+            container.innerHTML = `
+                <div class="question-card active">
+                    <div class="question-number">Question ${index + 1} of ${triviaQuestions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options" id="optionsContainer">
+                        ${question.options.map((option, i) => `
+                            <div class="option" data-index="${i}" onclick="selectOption(${i})">
+                                ${String.fromCharCode(65 + i)}. ${option}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            // Update category indicator
+            document.getElementById('categoryIndicator').textContent = `${question.category} Trivia`;
+
+            // Reset state
+            selectedOption = null;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('feedback').textContent = '';
+        }
+
+        // Select an option
+        function selectOption(index) {
+            // Remove previous selection
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            // Add selection to clicked option
+            const option = document.querySelector(`[data-index="${index}"]`);
+            option.classList.add('selected');
+            selectedOption = index;
+
+            // Enable submit button
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        // Submit answer
+        function submitAnswer() {
+            if (selectedOption === null) return;
+
+            const question = triviaQuestions[currentQuestionIndex];
+            const isCorrect = selectedOption === question.correct;
+
+            // Update score and correct answers
+            if (isCorrect) {
+                score += 10;
+                correctAnswers++;
+            }
+
+            // Show feedback
+            const feedback = document.getElementById('feedback');
+            const option = document.querySelector(`[data-index="${selectedOption}"]`);
+
+            if (isCorrect) {
+                option.classList.add('correct');
+                feedback.textContent = `✅ Correct! +10 points`;
+                feedback.className = 'feedback success';
+            } else {
+                option.classList.add('incorrect');
+                // Show correct answer
+                const correctOption = document.querySelector(`[data-index="${question.correct}"]`);
+                correctOption.classList.add('correct');
+                feedback.textContent = `❌ Incorrect. The correct answer was: ${question.options[question.correct]}`;
+                feedback.className = 'feedback error';
+            }
+
+            // Disable submit button
+            document.getElementById('submitBtn').disabled = true;
+
+            // Show next button
+            document.getElementById('nextBtn').style.display = 'inline-block';
+
+            updateStats();
+
+            // Check if game is complete
+            if (currentQuestionIndex >= triviaQuestions.length - 1) {
+                completeGame();
+            }
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            if (currentQuestionIndex < triviaQuestions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion(currentQuestionIndex);
+                document.getElementById('nextBtn').style.display = 'none';
+            }
+        }
+
+        // Complete the game
+        function completeGame() {
+            gameCompleted = true;
+
+            // Generate and display flag
+            const flag = generateFlagFromAnswers();
+            document.getElementById('dynamicFlag').textContent = flag;
+            document.getElementById('flag').style.display = 'block';
+
+            showMessage(`🎉 Trivia Complete! Final Score: ${score}/${triviaQuestions.length * 10}`, 'success');
+
+            // Hide next button
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        // Show hint
+        function showHint() {
+            const question = triviaQuestions[currentQuestionIndex];
+            showMessage(`💡 Hint: ${question.hint}`, '');
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('correctAnswers').textContent = correctAnswers;
+            document.getElementById('totalQuestions').textContent = triviaQuestions.length;
+
+            const progress = (currentQuestionIndex / triviaQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+
+        // Show message
+        function showMessage(text, type) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = `message ${type}`;
+        }
+
+        // Initialize game
+        initGame();
+        showMessage('🧟‍♂️ Ready to test your horror knowledge?', '');
+    </script>
+</body>
+</html>
