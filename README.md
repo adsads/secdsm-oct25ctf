@@ -7,33 +7,27 @@ Welcome to the most terrifying puzzle collection this side of the graveyard! Thi
 ### 🔤 Spooky Wordle
 - **Difficulty**: Easy
 - **Description**: Guess the Halloween-themed word in 6 tries! Each guess reveals clues about which letters are correct.
-- **Flag**: `SecDSM{spooky_wordle_master_2024}`
 
 ### 🔗 Haunted Connections
 - **Difficulty**: Medium
 - **Description**: Group 16 spooky words into 4 categories of 4. Find the hidden connections between horror elements!
-- **Flag**: `SecDSM{haunted_connections_master_2024}`
 
 ### 📝 Cryptic Crossword
 - **Difficulty**: Medium
 - **Description**: Solve this mini crossword puzzle with Halloween-themed clues. Every answer is a spooky word!
-- **Flag**: `SecDSM{cryptic_crossword_master_2024}`
 
 
 ### 💃 Tango
 - **Difficulty**: Medium
 - **Description**: Complete the Binairo puzzle! Fill the grid with equal suns and moons following the rules.
-- **Flag**: `SecDSM{tango_master_2024}`
 
 ### 🗜️ Zip
 - **Difficulty**: Medium
 - **Description**: Connect numbered dots in order to fill all empty cells! Some cells are blocked.
-- **Flag**: `SecDSM{zip_master_2024}`
 
 ### 👑 Queens
 - **Difficulty**: Hard
 - **Description**: Place 8 Halloween Queens on the chessboard without them attacking each other!
-- **Flag**: `SecDSM{queens_master_2024}`
 
 ## 🚀 How to Play
 
@@ -84,7 +78,7 @@ Each challenge is filled with horror movie references, spooky vocabulary, and Ha
 
 ## 📝 License
 
-This project is created for educational purposes as part of the SECDSM October Mini CTF 2024.
+This project is created for educational purposes as part of the SECDSM October Mini CTF 2025.
 
 ---
 
