@@ -37,7 +37,7 @@ Welcome to the most terrifying puzzle collection this side of the graveyard! Thi
 
 ## 🚀 How to Play
 
-1. Visit the [live site](https://your-username.github.io/secdsm-oct25ctf/) (replace with your GitHub username)
+1. Visit the [live site](https://adsads.github.io/secdsm-oct25ctf/) (replace with your GitHub username)
 2. Choose a challenge from the main menu
 3. Solve the puzzle to reveal the hidden flag
 4. Collect all flags to complete the CTF!
