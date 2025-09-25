@@ -84,6 +84,50 @@
             border-radius: 8px;
             position: relative;
         }
+
+        .constraint {
+            position: absolute;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffd93d;
+            text-shadow: 0 0 5px #ffd93d;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .constraint.equal {
+            color: #4caf50;
+            text-shadow: 0 0 5px #4caf50;
+        }
+
+        .constraint.different {
+            color: #f44336;
+            text-shadow: 0 0 5px #f44336;
+        }
+
+        .constraint.top {
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .constraint.bottom {
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .constraint.left {
+            left: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .constraint.right {
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
         
         .cell:hover {
             background: rgba(255, 107, 107, 0.3);
@@ -252,7 +296,8 @@
         <p>🎃 Fill the grid so each row and column has equal suns (☀️) and moons (🌑)</p>
         <p>🔗 No more than 2 suns or moons can be next to each other</p>
         <p>⚠️ Click empty cells to cycle through: empty → sun → moon → empty</p>
-        <p>👻 Some cells are pre-filled as hints - complete the puzzle to reveal the flag!</p>
+        <p>👻 Two cells with a "=" sign between them should contain circles of the same type.</p>
+        <p>🦇 Two cells with a "x" sign between them should contain circles of the opposite type.</p>
     </div>
     
     <div class="game-container">
@@ -279,7 +324,7 @@
         
         <div class="flag" id="flag">
             <h3>🎉 Congratulations! You solved all tangos! 🎉</h3>
-            <p><strong>Flag:</strong> <code>SecDSM{tango_master_2025}</code></p>
+            <p><strong>Flag:</strong> <code id="dynamicFlag">SecDSM{computing_flag...}</code></p>
             <p>You've mastered the art of spooky tile matching!</p>
         </div>
     </div>
@@ -292,13 +337,43 @@
         
         // Seeded puzzle (some cells pre-filled)
         const seededPuzzle = [
-            ['', 'sun', '', 'moon', '', ''],
-            ['', '', '', '', '', ''],
-            ['sun', '', '', '', '', 'sun'],
-            ['', '', '', '', '', 'sun'],
-            ['sun', '', 'sun', '', '', ''],
-            ['', '', '', '', 'moon', 'moon']
+            ['', 'sun', '', '', '', 'moon'],
+            ['', 'sun', '', '', 'moon', ''],
+            ['moon', '', '', 'sun', '', ''],
+            ['', '', 'moon', '', '', 'sun'],
+            ['', '', '', '', 'moon', ''],
+            ['', '', '', '', '', '']
         ];
+
+        // Constraint indicators: [row1, col1, direction, type, row2, col2]
+        // direction: 'right', 'bottom'
+        // type: 'equal' (=), 'different' (x)
+        const constraints = [
+            // [0, 0, 'right', 'different', 0, 2],  // Row 0: Cell 0 and Cell 2 should be different
+            // [1, 1, 'bottom', 'equal', 2, 1],    // Column 1: Row 1 and Row 2 should be equal
+            // [2, 3, 'right', 'equal', 2, 5],     // Row 2: Cell 3 and Cell 5 should be equal
+            // [3, 2, 'bottom', 'different', 5, 2], // Column 2: Row 3 and Row 5 should be different
+            // [4, 1, 'right', 'different', 4, 3],  // Row 4: Cell 1 and Cell 3 should be different
+            // [0, 4, 'bottom', 'equal', 2, 4]      // Column 4: Row 0 and Row 2 should be equal
+        ];
+
+        // Simple hash function for generating flags
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32-bit integer
+            }
+            return Math.abs(hash).toString(16).toUpperCase().padStart(8, '0');
+        }
+
+        // Generate flag from board state
+        function generateFlagFromBoard() {
+            const boardString = board.map(row => row.join('')).join('');
+            const hash = simpleHash(boardString);
+            return `SecDSM{tango_${hash}}`;
+        }
         
         // Save game state
         function saveGameState() {
@@ -333,11 +408,42 @@
             return false;
         }
         
+        // Render constraints on the board
+        function renderConstraints() {
+            constraints.forEach(([row1, col1, direction, type, row2, col2]) => {
+                const cell1 = document.querySelector(`[data-row="${row1}"][data-col="${col1}"]`);
+                const cell2 = document.querySelector(`[data-row="${row2}"][data-col="${col2}"]`);
+
+                if (cell1 && cell2) {
+                    const constraintDiv = document.createElement('div');
+                    constraintDiv.className = `constraint ${type} ${direction}`;
+                    constraintDiv.textContent = type === 'equal' ? '=' : '×';
+
+                    // Position the constraint between the two cells
+                    if (direction === 'right') {
+                        constraintDiv.style.position = 'absolute';
+                        constraintDiv.style.left = '50%';
+                        constraintDiv.style.top = '50%';
+                        constraintDiv.style.transform = 'translate(-50%, -50%)';
+                        constraintDiv.style.zIndex = '5';
+                        cell1.appendChild(constraintDiv);
+                    } else if (direction === 'bottom') {
+                        constraintDiv.style.position = 'absolute';
+                        constraintDiv.style.left = '50%';
+                        constraintDiv.style.bottom = '-15px';
+                        constraintDiv.style.transform = 'translateX(-50%)';
+                        constraintDiv.style.zIndex = '5';
+                        cell1.appendChild(constraintDiv);
+                    }
+                }
+            });
+        }
+
         // Initialize game
         function initGame() {
             const gameBoard = document.getElementById('gameBoard');
             gameBoard.innerHTML = '';
-            
+
             // Try to load saved state
             if (loadGameState()) {
                 restoreGameState();
@@ -349,7 +455,7 @@
                         cell.className = 'cell';
                         cell.dataset.row = row;
                         cell.dataset.col = col;
-                        
+
                         // Set seeded values
                         if (seededPuzzle[row][col] !== '') {
                             board[row][col] = seededPuzzle[row][col];
@@ -365,12 +471,14 @@
                         } else {
                             cell.onclick = () => toggleCell(row, col);
                         }
-                        
+
                         gameBoard.appendChild(cell);
                     }
                 }
             }
-            
+
+            // Render constraints after board is created
+            renderConstraints();
             updateStats();
         }
         
@@ -378,20 +486,20 @@
         function restoreGameState() {
             const gameBoard = document.getElementById('gameBoard');
             gameBoard.innerHTML = '';
-            
+
             for (let row = 0; row < 6; row++) {
                 for (let col = 0; col < 6; col++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
                     cell.dataset.row = row;
                     cell.dataset.col = col;
-                    
+
                     if (seeded[row][col]) {
                         cell.classList.add('seeded');
                     } else {
                         cell.onclick = () => toggleCell(row, col);
                     }
-                    
+
                     if (board[row][col] === 'sun') {
                         cell.classList.add('sun');
                         cell.textContent = '☀️';
@@ -399,12 +507,18 @@
                         cell.classList.add('moon');
                         cell.textContent = '🌑';
                     }
-                    
+
                     gameBoard.appendChild(cell);
                 }
             }
-            
+
+            // Render constraints after board is restored
+            renderConstraints();
+
             if (gameWon) {
+                // Regenerate the flag from the saved board state
+                const flag = generateFlagFromBoard();
+                document.getElementById('dynamicFlag').textContent = flag;
                 document.getElementById('flag').style.display = 'block';
             }
         }
@@ -518,10 +632,36 @@
                     return;
                 }
             }
-            
+
+            // Check constraint satisfaction
+            for (const [row1, col1, direction, type, row2, col2] of constraints) {
+                const cell1 = board[row1][col1];
+                const cell2 = board[row2][col2];
+
+                if (cell1 === '' || cell2 === '') {
+                    showMessage('❌ All constraint cells must be filled!', 'error');
+                    return;
+                }
+
+                if (type === 'equal' && cell1 !== cell2) {
+                    showMessage(`❌ Constraint violation: Cells (${row1},${col1}) and (${row2},${col2}) must be equal!`, 'error');
+                    return;
+                }
+
+                if (type === 'different' && cell1 === cell2) {
+                    showMessage(`❌ Constraint violation: Cells (${row1},${col1}) and (${row2},${col2}) must be different!`, 'error');
+                    return;
+                }
+            }
+
             // Solution is correct!
             gameWon = true;
             saveGameState();
+
+            // Generate and display the dynamic flag
+            const flag = generateFlagFromBoard();
+            document.getElementById('dynamicFlag').textContent = flag;
+
             showMessage('🎉 Perfect! You solved the Tango puzzle!', 'success');
             document.getElementById('flag').style.display = 'block';
         }
@@ -543,10 +683,12 @@
             const hints = [
                 "💡 Each row and column must have exactly 3 suns and 3 moons",
                 "💡 No more than 2 suns or moons can be next to each other",
+                "💡 Green '=' means those cells must be the same (both suns or both moons)",
+                "💡 Red '×' means those cells must be different (one sun, one moon)",
                 "💡 Start by placing suns and moons to balance rows and columns",
                 "💡 Think about the constraints: 6x6 grid, 3 suns + 3 moons per row/column"
             ];
-            
+
             const randomHint = hints[Math.floor(Math.random() * hints.length)];
             showMessage(randomHint, '');
         }
