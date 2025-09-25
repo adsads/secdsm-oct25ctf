@@ -297,14 +297,14 @@
     <div class="header">
         <a href="../index.html" class="back-link">← Back to Challenges</a>
         <h1>🧠 Horror Trivia</h1>
-        <div class="subtitle">Test your knowledge of Addams Family & Horror Movies!</div>
+        <div class="subtitle">Test your knowledge of classic horror movies!</div>
     </div>
 
     <div class="instructions">
-        <p>🎃 Answer trivia questions about the Addams Family and classic horror movies</p>
+        <p>🎃 Answer trivia questions about classic horror movies</p>
         <p>👻 Each correct answer reveals part of the flag</p>
         <p>🧟‍♂️ Get enough correct to unlock the complete flag!</p>
-        <p>⚰️ Choose wisely - you can only answer each question once!</p>
+        <p>⚰️ Questions are randomized - choose wisely!</p>
     </div>
 
     <div class="game-container">
@@ -353,46 +353,8 @@
     </div>
 
     <script>
-        // Trivia questions data
+        // Trivia questions data - All Horror Movies
         const triviaQuestions = [
-            // Addams Family Questions (0-4)
-            {
-                category: "Addams Family",
-                question: "What is the name of the Addams Family's butler?",
-                options: ["Lurch", "Thing", "Cousin Itt", "Uncle Fester"],
-                correct: 0,
-                hint: "He's the tall, silent one who answers the door"
-            },
-            {
-                category: "Addams Family",
-                question: "What instrument does Uncle Fester play?",
-                options: ["Tuba", "Violin", "Piano", "Ukulele"],
-                correct: 3,
-                hint: "It's a small stringed instrument from Hawaii"
-            },
-            {
-                category: "Addams Family",
-                question: "What is Wednesday Addams' favorite hobby?",
-                options: ["Reading", "Torturing her brother", "Playing with dolls", "Cooking"],
-                correct: 1,
-                hint: "She loves making her brother Pugsley suffer"
-            },
-            {
-                category: "Addams Family",
-                question: "What does Cousin Itt drive?",
-                options: ["A hearse", "A motorcycle", "A carriage", "A sports car"],
-                correct: 2,
-                hint: "It's pulled by horses and very old-fashioned"
-            },
-            {
-                category: "Addams Family",
-                question: "What is the Addams Family mansion called?",
-                options: ["The Haunted House", "The Addams Estate", "The Spooky Manor", "None of the above"],
-                correct: 3,
-                hint: "It's never given a specific name in the original series"
-            },
-
-            // Horror Movie Questions (5-9)
             {
                 category: "Horror Movies",
                 question: "In 'The Shining', what is the name of the hotel?",
@@ -427,6 +389,76 @@
                 options: ["1968", "1978", "1958", "1988"],
                 correct: 0,
                 hint: "It was George Romero's first zombie film"
+            },
+            {
+                category: "Horror Movies",
+                question: "In 'Scream', what is the name of the killer's mask?",
+                options: ["Hockey Mask", "Ghostface", "Ski Mask", "Clown Mask"],
+                correct: 1,
+                hint: "It's the iconic mask from the slasher film series"
+            },
+            {
+                category: "Horror Movies",
+                question: "What is the name of the hotel in 'The Bates Motel'?",
+                options: ["Bates Motel", "Overlook Hotel", "Hill House", "Amityville House"],
+                correct: 0,
+                hint: "It's from the movie 'Psycho' and its prequel series"
+            },
+            {
+                category: "Horror Movies",
+                question: "Who played Freddy Krueger in 'A Nightmare on Elm Street'?",
+                options: ["Robert Englund", "Kane Hodder", "Brad Dourif", "Doug Bradley"],
+                correct: 0,
+                hint: "He's the actor who brought the dream killer to life"
+            },
+            {
+                category: "Horror Movies",
+                question: "In 'The Ring', what do people die from after watching the video?",
+                options: ["7 days later", "24 hours later", "3 days later", "Immediately"],
+                correct: 0,
+                hint: "You have exactly one week after watching"
+            },
+            {
+                category: "Horror Movies",
+                question: "What is the name of the clown in Stephen King's 'IT'?",
+                options: ["Bozo", "Pennywise", "Krusty", "Ronald"],
+                correct: 1,
+                hint: "He terrorizes the children of Derry, Maine"
+            },
+            {
+                category: "Horror Movies",
+                question: "In 'Jaws', what is the name of the shark?",
+                options: ["Jaws", "Bruce", "White Death", "Moby Dick"],
+                correct: 1,
+                hint: "The mechanical shark used in filming was nicknamed this"
+            },
+            {
+                category: "Horror Movies",
+                question: "What year was 'The Texas Chain Saw Massacre' released?",
+                options: ["1974", "1978", "1980", "1972"],
+                correct: 0,
+                hint: "It was Tobe Hooper's breakthrough horror film"
+            },
+            {
+                category: "Horror Movies",
+                question: "Who directed 'Get Out'?",
+                options: ["Ari Aster", "Robert Eggers", "Jordan Peele", "Jennifer Kent"],
+                correct: 2,
+                hint: "He's known for social commentary in horror films"
+            },
+            {
+                category: "Horror Movies",
+                question: "In 'Alien', what is the name of the spaceship?",
+                options: ["Nostromo", "Discovery", "Enterprise", "Serenity"],
+                correct: 0,
+                hint: "It's a commercial towing vehicle in the film"
+            },
+            {
+                category: "Horror Movies",
+                question: "What is the real name of the killer in 'Friday the 13th'?",
+                options: ["Jason Voorhees", "Michael Myers", "Freddy Krueger", "Leatherface"],
+                correct: 0,
+                hint: "He wears a hockey mask and carries a machete"
             }
         ];
 
@@ -454,8 +486,19 @@
             return `SecDSM{horror_trivia_${hash}}`;
         }
 
+        // Shuffle array function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
         // Initialize game
         function initGame() {
+            // Shuffle the questions for randomization
+            triviaQuestions = shuffleArray([...triviaQuestions]);
             showQuestion(0);
             updateStats();
         }
