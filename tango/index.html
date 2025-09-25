@@ -309,6 +309,16 @@
             };
             localStorage.setItem('tangoState', JSON.stringify(gameState));
         }
+
+               // Save game state
+        function deleteGameState() {
+            const saved = localStorage.getItem('tangoState');
+            if (saved) {
+                localStorage.removeItem('tangoState');
+                return true;
+            }
+            return false;
+        }
         
         // Load game state
         function loadGameState() {
@@ -519,17 +529,10 @@
         // Clear the board
         function clearBoard() {
             board = Array(6).fill().map(() => Array(6).fill(''));
-            seeded = Array(6).fill().map(() => Array(6).fill(false));
             gameWon = false;
 
-            document.querySelectorAll('.cell').forEach(cell => {
-                cell.classList.remove('sun', 'moon', 'error', 'seeded');
-                cell.textContent = '';
-                cell.onclick = () => toggleCell(parseInt(cell.dataset.row), parseInt(cell.dataset.col));
-            });
-
             document.getElementById('flag').style.display = 'none';
-            saveGameState();
+            deleteGameState();
             updateStats();
             initGame();
             showMessage('🧹 Board cleared! Start placing suns and moons.', '');
