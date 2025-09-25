@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💃 Tango - Halloween Mini CTF</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #ff6b6b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ff6b6b;
+            text-shadow: 0 0 10px #ff6b6b;
+        }
+        
+        .subtitle {
+            color: #ffd93d;
+            margin-bottom: 20px;
+        }
+        
+        .back-link {
+            color: #a8e6cf;
+            text-decoration: none;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .back-link:hover {
+            color: #ffd93d;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #ff6b6b;
+        }
+        
+        .cell {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #666;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .cell:hover {
+            background: rgba(255, 107, 107, 0.3);
+            border-color: #ffd93d;
+            transform: scale(1.05);
+        }
+        
+        .cell.sun {
+            background: #ffd93d;
+            border-color: #ffd93d;
+            color: #1a1a2e;
+        }
+        
+        .cell.moon {
+            background: #666;
+            border-color: #666;
+            color: white;
+        }
+        
+        .cell.error {
+            background: #f44336;
+            border-color: #f44336;
+            color: white;
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        .cell.seeded {
+            cursor: default;
+        }
+        
+        .cell.seeded:hover {
+            background: inherit;
+            border-color: inherit;
+            transform: none;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: 2px solid #ff6b6b;
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: rgba(255, 107, 107, 0.4);
+            border-color: #ffd93d;
+            color: #ffd93d;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stat {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            min-width: 100px;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffd93d;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #a8e6cf;
+        }
+        
+        .message {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            min-height: 30px;
+        }
+        
+        .success {
+            color: #4caf50;
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+        
+        .error {
+            color: #f44336;
+        }
+        
+        .flag {
+            color: #ffd93d;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid #ffd93d;
+            border-radius: 10px;
+            background: rgba(255, 217, 61, 0.1);
+            display: none;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 5px currentColor; }
+            to { text-shadow: 0 0 15px currentColor; }
+        }
+        
+        .instructions {
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #a8e6cf;
+            line-height: 1.6;
+        }
+        
+        .selected-tiles {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            min-height: 60px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .selected-tile {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #ffd93d;
+            background: rgba(255, 217, 61, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="../index.html" class="back-link">← Back to Challenges</a>
+        <h1>💃 Tango</h1>
+        <div class="subtitle">Complete the Binairo puzzle!</div>
+    </div>
+    
+    <div class="instructions">
+        <p>🎃 Fill the grid so each row and column has equal suns (☀️) and moons (🌑)</p>
+        <p>🔗 No more than 2 suns or moons can be next to each other</p>
+        <p>⚠️ Click empty cells to cycle through: empty → sun → moon → empty</p>
+        <p>👻 Some cells are pre-filled as hints - complete the puzzle to reveal the flag!</p>
+    </div>
+    
+    <div class="game-container">
+        <div class="game-board" id="gameBoard"></div>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="sunsPlaced">0</div>
+                <div class="stat-label">Suns Placed</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="moonsPlaced">0</div>
+                <div class="stat-label">Moons Placed</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" onclick="checkSolution()">Check Solution</button>
+            <button class="btn" onclick="clearBoard()">Clear Board</button>
+            <button class="btn" onclick="showHint()">Show Hint</button>
+        </div>
+        
+        <div class="message" id="message"></div>
+        
+        <div class="flag" id="flag">
+            <h3>🎉 Congratulations! You solved all tangos! 🎉</h3>
+            <p><strong>Flag:</strong> <code>SecDSM{tango_master_2024}</code></p>
+            <p>You've mastered the art of spooky tile matching!</p>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let board = Array(6).fill().map(() => Array(6).fill(''));
+        let seeded = Array(6).fill().map(() => Array(6).fill(false));
+        let gameWon = false;
+        
+        // Seeded puzzle (some cells pre-filled)
+        const seededPuzzle = [
+            ['', '', 'sun', '', '', ''],
+            ['', 'moon', '', '', 'sun', ''],
+            ['', '', '', 'moon', '', ''],
+            ['sun', '', '', '', '', 'moon'],
+            ['', '', 'moon', '', '', ''],
+            ['', 'sun', '', '', '', '']
+        ];
+        
+        // Save game state
+        function saveGameState() {
+            const gameState = {
+                board: board,
+                seeded: seeded,
+                gameWon: gameWon
+            };
+            localStorage.setItem('tangoState', JSON.stringify(gameState));
+        }
+        
+        // Load game state
+        function loadGameState() {
+            const saved = localStorage.getItem('tangoState');
+            if (saved) {
+                const gameState = JSON.parse(saved);
+                board = gameState.board;
+                seeded = gameState.seeded || Array(6).fill().map(() => Array(6).fill(false));
+                gameWon = gameState.gameWon;
+                return true;
+            }
+            return false;
+        }
+        
+        // Initialize game
+        function initGame() {
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.innerHTML = '';
+            
+            // Try to load saved state
+            if (loadGameState()) {
+                restoreGameState();
+            } else {
+                // Create board with seeded puzzle
+                for (let row = 0; row < 6; row++) {
+                    for (let col = 0; col < 6; col++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        cell.dataset.row = row;
+                        cell.dataset.col = col;
+                        
+                        // Set seeded values
+                        if (seededPuzzle[row][col] !== '') {
+                            board[row][col] = seededPuzzle[row][col];
+                            seeded[row][col] = true;
+                            cell.classList.add('seeded');
+                            if (seededPuzzle[row][col] === 'sun') {
+                                cell.classList.add('sun');
+                                cell.textContent = '☀️';
+                            } else if (seededPuzzle[row][col] === 'moon') {
+                                cell.classList.add('moon');
+                                cell.textContent = '🌑';
+                            }
+                        } else {
+                            cell.onclick = () => toggleCell(row, col);
+                        }
+                        
+                        gameBoard.appendChild(cell);
+                    }
+                }
+            }
+            
+            updateStats();
+        }
+        
+        // Restore game state
+        function restoreGameState() {
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.innerHTML = '';
+            
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 6; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    
+                    if (seeded[row][col]) {
+                        cell.classList.add('seeded');
+                    } else {
+                        cell.onclick = () => toggleCell(row, col);
+                    }
+                    
+                    if (board[row][col] === 'sun') {
+                        cell.classList.add('sun');
+                        cell.textContent = '☀️';
+                    } else if (board[row][col] === 'moon') {
+                        cell.classList.add('moon');
+                        cell.textContent = '🌑';
+                    }
+                    
+                    gameBoard.appendChild(cell);
+                }
+            }
+            
+            if (gameWon) {
+                document.getElementById('flag').style.display = 'block';
+            }
+        }
+        
+        // Toggle cell state
+        function toggleCell(row, col) {
+            if (gameWon || seeded[row][col]) return;
+            
+            const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            
+            // Cycle through: empty → sun → moon → empty
+            if (board[row][col] === '') {
+                board[row][col] = 'sun';
+                cell.classList.add('sun');
+                cell.textContent = '☀️';
+            } else if (board[row][col] === 'sun') {
+                board[row][col] = 'moon';
+                cell.classList.remove('sun');
+                cell.classList.add('moon');
+                cell.textContent = '🌑';
+            } else if (board[row][col] === 'moon') {
+                board[row][col] = '';
+                cell.classList.remove('moon');
+                cell.textContent = '';
+            }
+            
+            saveGameState();
+            updateStats();
+            checkForErrors();
+        }
+        
+        // Check for rule violations
+        function checkForErrors() {
+            // Clear previous error states
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.classList.remove('error');
+            });
+            
+            let hasErrors = false;
+            
+            // Check for 3+ consecutive suns or moons
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 4; col++) {
+                    if (board[row][col] && board[row][col] === board[row][col + 1] && board[row][col] === board[row][col + 2]) {
+                        document.querySelector(`[data-row="${row}"][data-col="${col}"]`).classList.add('error');
+                        document.querySelector(`[data-row="${row}"][data-col="${col + 1}"]`).classList.add('error');
+                        document.querySelector(`[data-row="${row}"][data-col="${col + 2}"]`).classList.add('error');
+                        hasErrors = true;
+                    }
+                }
+            }
+            
+            // Check columns
+            for (let col = 0; col < 6; col++) {
+                for (let row = 0; row < 4; row++) {
+                    if (board[row][col] && board[row][col] === board[row + 1][col] && board[row][col] === board[row + 2][col]) {
+                        document.querySelector(`[data-row="${row}"][data-col="${col}"]`).classList.add('error');
+                        document.querySelector(`[data-row="${row + 1}"][data-col="${col}"]`).classList.add('error');
+                        document.querySelector(`[data-row="${row + 2}"][data-col="${col}"]`).classList.add('error');
+                        hasErrors = true;
+                    }
+                }
+            }
+            
+            return hasErrors;
+        }
+        
+        // Check if solution is correct
+        function checkSolution() {
+            if (checkForErrors()) {
+                showMessage('❌ Fix the rule violations first!', 'error');
+                return;
+            }
+            
+            // Check if all cells are filled
+            let emptyCells = 0;
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 6; col++) {
+                    if (board[row][col] === '') {
+                        emptyCells++;
+                    }
+                }
+            }
+            
+            if (emptyCells > 0) {
+                showMessage(`❌ Fill all ${emptyCells} empty cells first!`, 'error');
+                return;
+            }
+            
+            // Check row and column balance
+            for (let row = 0; row < 6; row++) {
+                let suns = 0, moons = 0;
+                for (let col = 0; col < 6; col++) {
+                    if (board[row][col] === 'sun') suns++;
+                    if (board[row][col] === 'moon') moons++;
+                }
+                if (suns !== moons) {
+                    showMessage('❌ Each row must have equal suns and moons!', 'error');
+                    return;
+                }
+            }
+            
+            for (let col = 0; col < 6; col++) {
+                let suns = 0, moons = 0;
+                for (let row = 0; row < 6; row++) {
+                    if (board[row][col] === 'sun') suns++;
+                    if (board[row][col] === 'moon') moons++;
+                }
+                if (suns !== moons) {
+                    showMessage('❌ Each column must have equal suns and moons!', 'error');
+                    return;
+                }
+            }
+            
+            // Solution is correct!
+            gameWon = true;
+            saveGameState();
+            showMessage('🎉 Perfect! You solved the Tango puzzle!', 'success');
+            document.getElementById('flag').style.display = 'block';
+        }
+        
+        // Clear the board
+        function clearBoard() {
+            board = Array(6).fill().map(() => Array(6).fill(''));
+            seeded = Array(6).fill().map(() => Array(6).fill(false));
+            gameWon = false;
+            
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.classList.remove('sun', 'moon', 'error', 'seeded');
+                cell.textContent = '';
+            });
+            
+            document.getElementById('flag').style.display = 'none';
+            initGame();
+            showMessage('🧹 Board cleared! Start placing suns and moons.', '');
+        }
+        
+        // Show hint
+        function showHint() {
+            const hints = [
+                "💡 Each row and column must have exactly 3 suns and 3 moons",
+                "💡 No more than 2 suns or moons can be next to each other",
+                "💡 Start by placing suns and moons to balance rows and columns",
+                "💡 Think about the constraints: 6x6 grid, 3 suns + 3 moons per row/column"
+            ];
+            
+            const randomHint = hints[Math.floor(Math.random() * hints.length)];
+            showMessage(randomHint, '');
+        }
+        
+        // Update stats
+        function updateStats() {
+            let suns = 0, moons = 0;
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 6; col++) {
+                    if (board[row][col] === 'sun') suns++;
+                    if (board[row][col] === 'moon') moons++;
+                }
+            }
+            
+            document.getElementById('sunsPlaced').textContent = suns;
+            document.getElementById('moonsPlaced').textContent = moons;
+        }
+        
+        // Show message
+        function showMessage(text, type) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = `message ${type}`;
+        }
+        
+        // Initialize game
+        initGame();
+        showMessage('🎃 Start placing suns and moons on the grid!', '');
+    </script>
+</body>
+</html>

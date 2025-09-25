@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎃 Halloween Mini CTF - Spooky Puzzles 🎃</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #ff6b6b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ff6b6b, 0 0 20px #ff6b6b, 0 0 30px #ff6b6b; }
+            to { text-shadow: 0 0 20px #ff6b6b, 0 0 30px #ff6b6b, 0 0 40px #ff6b6b; }
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: #ff6b6b;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ffd93d;
+            margin-bottom: 20px;
+        }
+        
+        .description {
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            color: #a8e6cf;
+        }
+        
+        .challenges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        .challenge-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #ff6b6b;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+        
+        .challenge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+            border-color: #ffd93d;
+        }
+        
+        .challenge-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .challenge-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #ffd93d;
+        }
+        
+        .challenge-description {
+            color: #a8e6cf;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+        
+        .challenge-difficulty {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .easy { background: #4caf50; color: white; }
+        .medium { background: #ff9800; color: white; }
+        .hard { background: #f44336; color: white; }
+        
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .challenges-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎃 Halloween Mini CTF 🎃</h1>
+        <div class="subtitle">Spooky Puzzles & Cryptic Challenges</div>
+    </div>
+    
+    <div class="description">
+        Welcome to the most terrifying puzzle collection this side of the graveyard! 
+        Test your wits against these Halloween-themed challenges inspired by your favorite daily puzzles. 
+        Each challenge contains hidden flags waiting to be discovered by the bravest souls...
+    </div>
+    
+    <div class="challenges-grid">
+        <div class="challenge-card" onclick="window.location.href='spooky-wordle/index.html'">
+            <span class="challenge-icon">🔤</span>
+            <div class="challenge-title">Spooky Wordle</div>
+            <div class="challenge-description">
+                Guess the Halloween-themed word in 6 tries! Each guess reveals clues about which letters are correct.
+            </div>
+            <span class="challenge-difficulty easy">Easy</span>
+        </div>
+        
+        <div class="challenge-card" onclick="window.location.href='haunted-connections/index.html'">
+            <span class="challenge-icon">🔗</span>
+            <div class="challenge-title">Haunted Connections</div>
+            <div class="challenge-description">
+                Group 16 spooky words into 4 categories of 4. Find the hidden connections between horror elements!
+            </div>
+            <span class="challenge-difficulty medium">Medium</span>
+        </div>
+        
+        <div class="challenge-card" onclick="window.location.href='cryptic-crossword/index.html'">
+            <span class="challenge-icon">📝</span>
+            <div class="challenge-title">Cryptic Crossword</div>
+            <div class="challenge-description">
+                Solve this mini crossword puzzle with Halloween-themed clues. Every answer is a spooky word!
+            </div>
+            <span class="challenge-difficulty medium">Medium</span>
+        </div>
+        
+        
+        
+        <div class="challenge-card" onclick="window.location.href='tango/index.html'">
+            <span class="challenge-icon">💃</span>
+            <div class="challenge-title">Tango</div>
+            <div class="challenge-description">
+                Complete the Binairo puzzle! Fill the grid with equal suns and moons following the rules.
+            </div>
+            <span class="challenge-difficulty medium">Medium</span>
+        </div>
+        
+        <div class="challenge-card" onclick="window.location.href='zip/index.html'">
+            <span class="challenge-icon">🗜️</span>
+            <div class="challenge-title">Zip</div>
+            <div class="challenge-description">
+                Connect numbered dots in order to fill all empty cells! Some cells are blocked.
+            </div>
+            <span class="challenge-difficulty medium">Medium</span>
+        </div>
+        
+        <div class="challenge-card" onclick="window.location.href='queens/index.html'">
+            <span class="challenge-icon">👑</span>
+            <div class="challenge-title">Queens</div>
+            <div class="challenge-description">
+                Place 8 Halloween Queens on the chessboard without them attacking each other!
+            </div>
+            <span class="challenge-difficulty hard">Hard</span>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>🎃 Happy Halloween! May your puzzles be spooky and your flags be found! 👻</p>
+        <p>Created for SECDSM October Mini CTF 2024</p>
+    </div>
+</body>
+</html>

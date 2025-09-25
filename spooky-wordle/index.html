@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔤 Spooky Wordle - Halloween Mini CTF</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #ff6b6b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ff6b6b;
+            text-shadow: 0 0 10px #ff6b6b;
+        }
+        
+        .subtitle {
+            color: #ffd93d;
+            margin-bottom: 20px;
+        }
+        
+        .back-link {
+            color: #a8e6cf;
+            text-decoration: none;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .back-link:hover {
+            color: #ffd93d;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-rows: repeat(6, 1fr);
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+        }
+        
+        .cell {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .cell.filled {
+            border-color: #666;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .cell.correct {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+        
+        .cell.present {
+            background: #ff9800;
+            border-color: #ff9800;
+            color: white;
+        }
+        
+        .cell.absent {
+            background: #666;
+            border-color: #666;
+            color: white;
+        }
+        
+        .keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 20px;
+        }
+        
+        .keyboard-row {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+        
+        .key {
+            padding: 10px 15px;
+            border: 2px solid #444;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ff6b6b;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .key:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .key.wide {
+            padding: 10px 25px;
+        }
+        
+        .key.correct {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+        
+        .key.present {
+            background: #ff9800;
+            border-color: #ff9800;
+            color: white;
+        }
+        
+        .key.absent {
+            background: #666;
+            border-color: #666;
+            color: white;
+        }
+        
+        .message {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            min-height: 30px;
+        }
+        
+        .success {
+            color: #4caf50;
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+        
+        .error {
+            color: #f44336;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .clear-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .clear-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+        
+        .flag {
+            color: #ffd93d;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid #ffd93d;
+            border-radius: 10px;
+            background: rgba(255, 217, 61, 0.1);
+            display: none;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 5px currentColor; }
+            to { text-shadow: 0 0 15px currentColor; }
+        }
+        
+        .instructions {
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #a8e6cf;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="../index.html" class="back-link">← Back to Challenges</a>
+        <h1>🔤 Spooky Wordle</h1>
+        <div class="subtitle">Guess the Halloween word in 6 tries!</div>
+    </div>
+    
+    <div class="instructions">
+        <p>🎃 Each guess must be a valid 5-letter word (any valid Wordle word works!)</p>
+        <p>🟩 Green = Correct letter in correct position</p>
+        <p>🟨 Orange = Correct letter in wrong position</p>
+        <p>⬛ Gray = Letter not in the word</p>
+        <p>👻 Find the spooky Halloween word to reveal the flag!</p>
+    </div>
+    
+    <div class="game-container">
+        <div class="game-board" id="gameBoard"></div>
+        
+        <div class="message" id="message"></div>
+        
+        <div class="flag" id="flag">
+            <h3>🎉 Congratulations! You found the flag! 🎉</h3>
+            <p><strong>Flag:</strong> <code>SecDSM{spooky_wordle_master_2025}</code></p>
+            <p>You've mastered the art of spooky word guessing!</p>
+        </div>
+        
+        <div class="controls">
+            <button onclick="clearGame()" class="clear-btn">🧹 Clear Game</button>
+        </div>
+        
+        <div class="keyboard">
+            <div class="keyboard-row">
+                <div class="key" data-key="Q">Q</div>
+                <div class="key" data-key="W">W</div>
+                <div class="key" data-key="E">E</div>
+                <div class="key" data-key="R">R</div>
+                <div class="key" data-key="T">T</div>
+                <div class="key" data-key="Y">Y</div>
+                <div class="key" data-key="U">U</div>
+                <div class="key" data-key="I">I</div>
+                <div class="key" data-key="O">O</div>
+                <div class="key" data-key="P">P</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="key" data-key="A">A</div>
+                <div class="key" data-key="S">S</div>
+                <div class="key" data-key="D">D</div>
+                <div class="key" data-key="F">F</div>
+                <div class="key" data-key="G">G</div>
+                <div class="key" data-key="H">H</div>
+                <div class="key" data-key="J">J</div>
+                <div class="key" data-key="K">K</div>
+                <div class="key" data-key="L">L</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="key wide" data-key="ENTER">ENTER</div>
+                <div class="key" data-key="Z">Z</div>
+                <div class="key" data-key="X">X</div>
+                <div class="key" data-key="C">C</div>
+                <div class="key" data-key="V">V</div>
+                <div class="key" data-key="B">B</div>
+                <div class="key" data-key="N">N</div>
+                <div class="key" data-key="M">M</div>
+                <div class="key wide" data-key="BACKSPACE">⌫</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Halloween-themed 5-letter words (answers)
+        const halloweenWords = [
+            'GHOST', 'WITCH', 'DEMON', 'BEAST', 'SCARE', 'SPOOK', 'CREEP', 'BLOOD',
+            'BONES', 'SKULL', 'GRAVE', 'TOMB', 'HAUNT', 'CURSE', 'SPELL', 'MAGIC',
+            'POWER', 'DEATH', 'NIGHT', 'DARK', 'MOON', 'BAT', 'OWL', 'CAT'
+        ];
+        
+        // Valid Wordle words (loaded from file)
+        let validWords = [];
+        
+        // Load valid words from file
+        async function loadValidWords() {
+            try {
+                const response = await fetch('valid-wordle-words.txt');
+                const text = await response.text();
+                validWords = text.trim().split('\n').map(word => word.trim().toUpperCase());
+            } catch (error) {
+                console.error('Failed to load word list:', error);
+                // Fallback to a small set of common words
+                validWords = halloweenWords;
+            }
+        }
+        
+        // Select a random Halloween word for this game (obfuscated)
+        const halloweenWordIndex = Math.floor(Math.random() * halloweenWords.length);
+        const targetWord = halloweenWords[halloweenWordIndex];
+        
+        let currentRow = 0;
+        let currentCol = 0;
+        let gameWon = false;
+        let gameOver = false;
+        let gameState = {
+            guesses: [],
+            currentRow: 0,
+            currentCol: 0,
+            gameWon: false,
+            gameOver: false,
+            targetWord: targetWord
+        };
+        
+        // Save game state
+        function saveGameState() {
+            gameState.guesses = [];
+            gameState.currentRow = currentRow;
+            gameState.currentCol = currentCol;
+            gameState.gameWon = gameWon;
+            gameState.gameOver = gameOver;
+            
+            // Save current board state
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 5; col++) {
+                    const cell = document.getElementById(`cell-${row}-${col}`);
+                    if (cell && cell.textContent) {
+                        gameState.guesses.push({
+                            row: row,
+                            col: col,
+                            letter: cell.textContent,
+                            classes: Array.from(cell.classList)
+                        });
+                    }
+                }
+            }
+            
+            localStorage.setItem('spookyWordleState', JSON.stringify(gameState));
+        }
+        
+        // Load game state
+        function loadGameState() {
+            const saved = localStorage.getItem('spookyWordleState');
+            if (saved) {
+                const savedState = JSON.parse(saved);
+                if (savedState.targetWord === targetWord) {
+                    gameState = savedState;
+                    currentRow = savedState.currentRow;
+                    currentCol = savedState.currentCol;
+                    gameWon = savedState.gameWon;
+                    gameOver = savedState.gameOver;
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        // Initialize game board
+        function initGame() {
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.innerHTML = '';
+            
+            for (let row = 0; row < 6; row++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'row';
+                for (let col = 0; col < 5; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.id = `cell-${row}-${col}`;
+                    rowDiv.appendChild(cell);
+                }
+                gameBoard.appendChild(rowDiv);
+            }
+            
+            // Try to load saved state
+            if (loadGameState()) {
+                restoreGameState();
+            }
+        }
+        
+        // Restore game state
+        function restoreGameState() {
+            gameState.guesses.forEach(guess => {
+                const cell = document.getElementById(`cell-${guess.row}-${guess.col}`);
+                if (cell) {
+                    cell.textContent = guess.letter;
+                    cell.classList.add(...guess.classes);
+                }
+            });
+            
+            // Update keyboard colors
+            updateKeyboardColors();
+            
+            if (gameWon) {
+                document.getElementById('flag').style.display = 'block';
+            }
+        }
+        
+        // Update keyboard colors based on guesses
+        function updateKeyboardColors() {
+            gameState.guesses.forEach(guess => {
+                if (guess.classes.includes('correct') || guess.classes.includes('present') || guess.classes.includes('absent')) {
+                    const key = document.querySelector(`[data-key="${guess.letter}"]`);
+                    if (key) {
+                        if (guess.classes.includes('correct')) {
+                            key.classList.add('correct');
+                        } else if (guess.classes.includes('present')) {
+                            key.classList.add('present');
+                        } else if (guess.classes.includes('absent')) {
+                            key.classList.add('absent');
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Handle keyboard input
+        function handleKeyPress(key) {
+            if (gameOver) return;
+            
+            if (key === 'ENTER') {
+                submitGuess();
+            } else if (key === 'BACKSPACE') {
+                deleteLetter();
+            } else if (key.length === 1 && key.match(/[A-Z]/)) {
+                addLetter(key);
+            }
+        }
+        
+        // Add letter to current cell
+        function addLetter(letter) {
+            if (currentCol < 5) {
+                const cell = document.getElementById(`cell-${currentRow}-${currentCol}`);
+                cell.textContent = letter;
+                cell.classList.add('filled');
+                currentCol++;
+                saveGameState();
+            }
+        }
+        
+        // Delete letter from current cell
+        function deleteLetter() {
+            if (currentCol > 0) {
+                currentCol--;
+                const cell = document.getElementById(`cell-${currentRow}-${currentCol}`);
+                cell.textContent = '';
+                cell.classList.remove('filled');
+                saveGameState();
+            }
+        }
+        
+        // Submit current guess
+        function submitGuess() {
+            if (currentCol !== 5) {
+                showMessage('Word must be 5 letters!', 'error');
+                return;
+            }
+            
+            // Get current guess
+            let guess = '';
+            for (let col = 0; col < 5; col++) {
+                const cell = document.getElementById(`cell-${currentRow}-${col}`);
+                guess += cell.textContent;
+            }
+            
+            // Check if word is valid
+            if (!validWords.includes(guess)) {
+                showMessage('Not a valid word!', 'error');
+                return;
+            }
+            
+            // Check guess against target word
+            const result = checkGuess(guess, targetWord);
+            
+            // Update cell colors
+            for (let col = 0; col < 5; col++) {
+                const cell = document.getElementById(`cell-${currentRow}-${col}`);
+                const key = document.querySelector(`[data-key="${guess[col]}"]`);
+                
+                if (result[col] === 'correct') {
+                    cell.classList.add('correct');
+                    key.classList.add('correct');
+                } else if (result[col] === 'present') {
+                    cell.classList.add('present');
+                    key.classList.add('present');
+                } else {
+                    cell.classList.add('absent');
+                    key.classList.add('absent');
+                }
+            }
+            
+            // Check if won
+            if (guess === targetWord) {
+                gameWon = true;
+                gameOver = true;
+                showMessage('🎉 Spooky word found! You win!', 'success');
+                document.getElementById('flag').style.display = 'block';
+                saveGameState();
+                return;
+            }
+            
+            // Move to next row
+            currentRow++;
+            currentCol = 0;
+            
+            // Check if game over
+            if (currentRow >= 6) {
+                gameOver = true;
+                showMessage(`Game over! The word was: ${targetWord}`, 'error');
+            } else {
+                showMessage('Keep guessing...', '');
+            }
+            
+            saveGameState();
+        }
+        
+        // Check guess against target word
+        function checkGuess(guess, target) {
+            const result = new Array(5).fill('absent');
+            const targetLetters = target.split('');
+            const guessLetters = guess.split('');
+            
+            // First pass: mark correct letters
+            for (let i = 0; i < 5; i++) {
+                if (guessLetters[i] === targetLetters[i]) {
+                    result[i] = 'correct';
+                    targetLetters[i] = null;
+                    guessLetters[i] = null;
+                }
+            }
+            
+            // Second pass: mark present letters
+            for (let i = 0; i < 5; i++) {
+                if (guessLetters[i] !== null) {
+                    const index = targetLetters.indexOf(guessLetters[i]);
+                    if (index !== -1) {
+                        result[i] = 'present';
+                        targetLetters[index] = null;
+                    }
+                }
+            }
+            
+            return result;
+        }
+        
+        // Show message
+        function showMessage(text, type) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = `message ${type}`;
+        }
+        
+        // Clear game
+        function clearGame() {
+            localStorage.removeItem('spookyWordleState');
+            currentRow = 0;
+            currentCol = 0;
+            gameWon = false;
+            gameOver = false;
+            gameState = {
+                guesses: [],
+                currentRow: 0,
+                currentCol: 0,
+                gameWon: false,
+                gameOver: false,
+                targetWord: targetWord
+            };
+            
+            // Clear the board
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('filled', 'correct', 'present', 'absent');
+            });
+            
+            // Clear keyboard colors
+            document.querySelectorAll('.key').forEach(key => {
+                key.classList.remove('correct', 'present', 'absent');
+            });
+            
+            document.getElementById('flag').style.display = 'none';
+            showMessage('🧹 Game cleared! Start fresh!', '');
+        }
+        
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                handleKeyPress('ENTER');
+            } else if (e.key === 'Backspace') {
+                handleKeyPress('BACKSPACE');
+            } else if (e.key.match(/[a-zA-Z]/)) {
+                handleKeyPress(e.key.toUpperCase());
+            }
+        });
+        
+        // Virtual keyboard
+        document.querySelectorAll('.key').forEach(key => {
+            key.addEventListener('click', () => {
+                const keyValue = key.getAttribute('data-key');
+                handleKeyPress(keyValue);
+            });
+        });
+        
+        // Initialize game
+        async function initializeGame() {
+            await loadValidWords();
+            initGame();
+            showMessage('🎃 Start guessing Halloween words!', '');
+        }
+        
+        // Start the game
+        initializeGame();
+        
+    </script>
+</body>
+</html>

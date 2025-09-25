@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔗 Haunted Connections - Halloween Mini CTF</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #ff6b6b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ff6b6b;
+            text-shadow: 0 0 10px #ff6b6b;
+        }
+        
+        .subtitle {
+            color: #ffd93d;
+            margin-bottom: 20px;
+        }
+        
+        .back-link {
+            color: #a8e6cf;
+            text-decoration: none;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .back-link:hover {
+            color: #ffd93d;
+        }
+        
+        .instructions {
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #a8e6cf;
+            line-height: 1.6;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .words-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .word-item {
+            padding: 15px;
+            border: 2px solid #444;
+            background: rgba(255, 255, 255, 0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .word-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #ffd93d;
+        }
+        
+        .word-item.selected {
+            background: rgba(255, 217, 61, 0.3);
+            border-color: #ffd93d;
+            color: #ffd93d;
+        }
+        
+        .word-item.correct {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+        
+        .word-item.incorrect {
+            background: #f44336;
+            border-color: #f44336;
+            color: white;
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .category {
+            padding: 10px;
+            border: 2px solid #666;
+            background: rgba(255, 255, 255, 0.05);
+            text-align: center;
+            border-radius: 8px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #a8e6cf;
+        }
+        
+        .category.solved {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: 2px solid #ff6b6b;
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: rgba(255, 107, 107, 0.4);
+            border-color: #ffd93d;
+            color: #ffd93d;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .message {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            min-height: 30px;
+        }
+        
+        .success {
+            color: #4caf50;
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+        
+        .error {
+            color: #f44336;
+        }
+        
+        .flag {
+            color: #ffd93d;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid #ffd93d;
+            border-radius: 10px;
+            background: rgba(255, 217, 61, 0.1);
+            display: none;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 5px currentColor; }
+            to { text-shadow: 0 0 15px currentColor; }
+        }
+        
+        .selected-count {
+            color: #ffd93d;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="../index.html" class="back-link">← Back to Challenges</a>
+        <h1>🔗 Haunted Connections</h1>
+        <div class="subtitle">Group 16 spooky words into 4 categories!</div>
+    </div>
+    
+    <div class="instructions">
+        <p>🎃 Select 4 words that share a common Halloween theme</p>
+        <p>🔗 Each group has a unique connection - think horror movies, monsters, or spooky elements</p>
+        <p>⚠️ Wrong guesses will cost you mistakes (4 allowed)</p>
+        <p>👻 Find all 4 groups to reveal the flag!</p>
+    </div>
+    
+    <div class="game-container">
+        <div class="selected-count" id="selectedCount">Select 4 words</div>
+        
+        <div class="words-grid" id="wordsGrid"></div>
+        
+        <div class="categories">
+            <div class="category" id="category1">
+                <span>Category 1</span>
+            </div>
+            <div class="category" id="category2">
+                <span>Category 2</span>
+            </div>
+            <div class="category" id="category3">
+                <span>Category 3</span>
+            </div>
+            <div class="category" id="category4">
+                <span>Category 4</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" id="submitBtn" onclick="submitGroup()">Submit Group</button>
+            <button class="btn" id="deselectBtn" onclick="deselectAll()">Deselect All</button>
+        </div>
+        
+        <div class="message" id="message"></div>
+        
+        <div class="flag" id="flag">
+            <h3>🎉 Congratulations! You solved all connections! 🎉</h3>
+            <p><strong>Flag:</strong> <code>SecDSM{haunted_connections_master_2024}</code></p>
+            <p>You've mastered the art of spooky connections!</p>
+        </div>
+    </div>
+
+    <script>
+        // Game data - 4 categories with 4 words each
+        const gameData = {
+            categories: [
+                {
+                    name: "Classic Horror Movies",
+                    words: ["FRANKENSTEIN", "DRACULA", "MUMMY", "WOLFMAN"],
+                    color: "#4caf50"
+                },
+                {
+                    name: "Halloween Monsters",
+                    words: ["VAMPIRE", "ZOMBIE", "GHOST", "DEMON"],
+                    color: "#ff9800"
+                },
+                {
+                    name: "Spooky Creatures",
+                    words: ["BAT", "SPIDER", "RAT", "CROW"],
+                    color: "#9c27b0"
+                },
+                {
+                    name: "Horror Settings",
+                    words: ["GRAVEYARD", "HAUNTED", "DUNGEON", "CEMETERY"],
+                    color: "#f44336"
+                }
+            ]
+        };
+        
+        let selectedWords = [];
+        let solvedCategories = [];
+        let mistakes = 0;
+        const maxMistakes = 4;
+        let gameWon = false;
+        
+        // Flatten all words for the grid
+        const allWords = gameData.categories.flatMap(cat => cat.words);
+        
+        // Shuffle the words
+        const shuffledWords = [...allWords].sort(() => Math.random() - 0.5);
+        
+        // Initialize game
+        function initGame() {
+            const wordsGrid = document.getElementById('wordsGrid');
+            wordsGrid.innerHTML = '';
+            
+            shuffledWords.forEach((word, index) => {
+                const wordItem = document.createElement('div');
+                wordItem.className = 'word-item';
+                wordItem.textContent = word;
+                wordItem.dataset.word = word;
+                wordItem.onclick = () => toggleWord(word);
+                wordsGrid.appendChild(wordItem);
+            });
+            
+            updateSelectedCount();
+        }
+        
+        // Toggle word selection
+        function toggleWord(word) {
+            if (gameWon) return;
+            
+            const wordElement = document.querySelector(`[data-word="${word}"]`);
+            
+            if (selectedWords.includes(word)) {
+                // Deselect
+                selectedWords = selectedWords.filter(w => w !== word);
+                wordElement.classList.remove('selected');
+            } else if (selectedWords.length < 4) {
+                // Select
+                selectedWords.push(word);
+                wordElement.classList.add('selected');
+            }
+            
+            updateSelectedCount();
+            updateSubmitButton();
+        }
+        
+        // Update selected count display
+        function updateSelectedCount() {
+            const count = selectedWords.length;
+            const countElement = document.getElementById('selectedCount');
+            countElement.textContent = `Selected: ${count}/4 words`;
+        }
+        
+        // Update submit button state
+        function updateSubmitButton() {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = selectedWords.length !== 4;
+        }
+        
+        // Submit selected group
+        function submitGroup() {
+            if (selectedWords.length !== 4) return;
+            
+            // Check if this group matches any category
+            const matchingCategory = gameData.categories.find(cat => {
+                return selectedWords.every(word => cat.words.includes(word));
+            });
+            
+            if (matchingCategory && !solvedCategories.includes(matchingCategory.name)) {
+                // Correct guess!
+                solvedCategories.push(matchingCategory.name);
+                
+                // Mark words as correct
+                selectedWords.forEach(word => {
+                    const wordElement = document.querySelector(`[data-word="${word}"]`);
+                    wordElement.classList.add('correct');
+                    wordElement.onclick = null; // Disable further clicks
+                });
+                
+                // Update category display
+                const categoryIndex = gameData.categories.findIndex(cat => cat.name === matchingCategory.name);
+                const categoryElement = document.getElementById(`category${categoryIndex + 1}`);
+                categoryElement.classList.add('solved');
+                categoryElement.textContent = matchingCategory.name;
+                categoryElement.style.backgroundColor = matchingCategory.color;
+                
+                showMessage(`🎉 Correct! Category: ${matchingCategory.name}`, 'success');
+                
+                // Check if game is won
+                if (solvedCategories.length === 4) {
+                    gameWon = true;
+                    setTimeout(() => {
+                        showMessage('🎉 All categories solved! You win!', 'success');
+                        document.getElementById('flag').style.display = 'block';
+                    }, 1000);
+                }
+            } else {
+                // Wrong guess
+                mistakes++;
+                
+                // Mark words as incorrect temporarily
+                selectedWords.forEach(word => {
+                    const wordElement = document.querySelector(`[data-word="${word}"]`);
+                    wordElement.classList.add('incorrect');
+                    setTimeout(() => {
+                        wordElement.classList.remove('incorrect');
+                    }, 500);
+                });
+                
+                if (mistakes >= maxMistakes) {
+                    showMessage(`💀 Game Over! You've made ${maxMistakes} mistakes!`, 'error');
+                    gameWon = true;
+                } else {
+                    showMessage(`❌ Not quite right! Mistakes: ${mistakes}/${maxMistakes}`, 'error');
+                }
+            }
+            
+            // Clear selection
+            deselectAll();
+        }
+        
+        // Deselect all words
+        function deselectAll() {
+            selectedWords.forEach(word => {
+                const wordElement = document.querySelector(`[data-word="${word}"]`);
+                wordElement.classList.remove('selected');
+            });
+            selectedWords = [];
+            updateSelectedCount();
+            updateSubmitButton();
+        }
+        
+        // Show message
+        function showMessage(text, type) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = `message ${type}`;
+        }
+        
+        // Initialize game
+        initGame();
+        showMessage('🎃 Select 4 words that share a spooky connection!', '');
+        
+    </script>
+</body>
+</html>

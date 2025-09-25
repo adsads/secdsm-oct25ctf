@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗜️ Zip - Halloween Mini CTF</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #ff6b6b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ff6b6b;
+            text-shadow: 0 0 10px #ff6b6b;
+        }
+        
+        .subtitle {
+            color: #ffd93d;
+            margin-bottom: 20px;
+        }
+        
+        .back-link {
+            color: #a8e6cf;
+            text-decoration: none;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .back-link:hover {
+            color: #ffd93d;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .zip-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #ff6b6b;
+        }
+        
+        .zip-cell {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #666;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            position: relative;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .zip-cell:hover {
+            background: rgba(255, 107, 107, 0.3);
+            border-color: #ffd93d;
+            transform: scale(1.05);
+        }
+        
+        .zip-cell.numbered {
+            background: #ffd93d;
+            border-color: #ffd93d;
+            color: #1a1a2e;
+        }
+        
+        .zip-cell.connected {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+        
+        .zip-cell.current {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+            color: white;
+            animation: pulse 1s ease-in-out infinite alternate;
+        }
+        
+        .zip-cell.blocked {
+            background: #333;
+            border-color: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+        
+        .zip-cell.blocked:hover {
+            background: #333;
+            border-color: #333;
+            transform: none;
+        }
+        
+        @keyframes pulse {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: 2px solid #ff6b6b;
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: rgba(255, 107, 107, 0.4);
+            border-color: #ffd93d;
+            color: #ffd93d;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stat {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            min-width: 100px;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffd93d;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #a8e6cf;
+        }
+        
+        .message {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            min-height: 30px;
+        }
+        
+        .success {
+            color: #4caf50;
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+        
+        .error {
+            color: #f44336;
+        }
+        
+        .flag {
+            color: #ffd93d;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid #ffd93d;
+            border-radius: 10px;
+            background: rgba(255, 217, 61, 0.1);
+            display: none;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 5px currentColor; }
+            to { text-shadow: 0 0 15px currentColor; }
+        }
+        
+        .instructions {
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #a8e6cf;
+            line-height: 1.6;
+        }
+        
+        .selected-items {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            min-height: 80px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .selected-item {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #ffd93d;
+            background: rgba(255, 217, 61, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        
+        .selected-item-icon {
+            font-size: 1.5rem;
+        }
+        
+        .selected-item-label {
+            font-size: 0.6rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="../index.html" class="back-link">← Back to Challenges</a>
+        <h1>🗜️ Zip</h1>
+        <div class="subtitle">Connect numbered dots in order to fill all empty cells!</div>
+    </div>
+    
+    <div class="instructions">
+        <p>🎃 Connect numbered dots in the correct order (1→2→3→4→5→6→7→8→9)</p>
+        <p>🔗 Fill every empty cell by drawing lines between consecutive numbers</p>
+        <p>⚠️ Some cells are blocked - plan an efficient path that covers all empty cells</p>
+        <p>👻 Complete the path to reveal the flag!</p>
+    </div>
+    
+    <div class="game-container">
+        <div class="zip-container" id="zipContainer"></div>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="currentNumber">1</div>
+                <div class="stat-label">Next Number</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="connectedCount">0</div>
+                <div class="stat-label">Connected</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" onclick="checkSolution()">Check Solution</button>
+            <button class="btn" onclick="clearBoard()">Clear Board</button>
+            <button class="btn" onclick="showHint()">Show Hint</button>
+        </div>
+        
+        <div class="message" id="message"></div>
+        
+        <div class="flag" id="flag">
+            <h3>🎉 Congratulations! You solved all zips! 🎉</h3>
+            <p><strong>Flag:</strong> <code>SecDSM{zip_master_2024}</code></p>
+            <p>You've mastered the art of spooky item grouping!</p>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let board = Array(5).fill().map(() => Array(5).fill(0));
+        let blocked = Array(5).fill().map(() => Array(5).fill(false));
+        let currentNumber = 1;
+        let gameWon = false;
+        let numberedPositions = [];
+        
+        // Generate puzzle with blocked cells and numbered positions
+        function generatePuzzle() {
+            // Create a 5x5 grid with some blocked cells
+            const blockedPattern = [
+                [false, false, true, false, false],
+                [false, true, false, true, false],
+                [true, false, false, false, true],
+                [false, true, false, true, false],
+                [false, false, true, false, false]
+            ];
+            
+            // Find empty positions (not blocked)
+            const emptyPositions = [];
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    if (!blockedPattern[row][col]) {
+                        emptyPositions.push({row, col});
+                    }
+                }
+            }
+            
+            // Shuffle empty positions and take first 9 for numbers
+            const shuffled = emptyPositions.sort(() => Math.random() - 0.5);
+            return {
+                blocked: blockedPattern,
+                numberedPositions: shuffled.slice(0, 9)
+            };
+        }
+        
+        // Save game state
+        function saveGameState() {
+            const gameState = {
+                board: board,
+                blocked: blocked,
+                currentNumber: currentNumber,
+                gameWon: gameWon,
+                numberedPositions: numberedPositions
+            };
+            localStorage.setItem('zipState', JSON.stringify(gameState));
+        }
+        
+        // Load game state
+        function loadGameState() {
+            const saved = localStorage.getItem('zipState');
+            if (saved) {
+                const gameState = JSON.parse(saved);
+                board = gameState.board;
+                blocked = gameState.blocked || Array(5).fill().map(() => Array(5).fill(false));
+                currentNumber = gameState.currentNumber;
+                gameWon = gameState.gameWon;
+                numberedPositions = gameState.numberedPositions;
+                return true;
+            }
+            return false;
+        }
+        
+        // Initialize game
+        function initGame() {
+            const zipContainer = document.getElementById('zipContainer');
+            zipContainer.innerHTML = '';
+            
+            // Try to load saved state
+            if (loadGameState()) {
+                restoreGameState();
+            } else {
+                // Generate new game
+                const puzzle = generatePuzzle();
+                blocked = puzzle.blocked;
+                numberedPositions = puzzle.numberedPositions;
+                board = Array(5).fill().map(() => Array(5).fill(0));
+                currentNumber = 1;
+                gameWon = false;
+                
+                // Create board
+                for (let row = 0; row < 5; row++) {
+                    for (let col = 0; col < 5; col++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'zip-cell';
+                        cell.dataset.row = row;
+                        cell.dataset.col = col;
+                        
+                        if (blocked[row][col]) {
+                            cell.classList.add('blocked');
+                            cell.textContent = '⬛';
+                        } else {
+                            cell.onclick = () => clickCell(row, col);
+                        }
+                        
+                        zipContainer.appendChild(cell);
+                    }
+                }
+                
+                // Place numbered dots
+                numberedPositions.forEach((pos, index) => {
+                    const cell = document.querySelector(`[data-row="${pos.row}"][data-col="${pos.col}"]`);
+                    cell.classList.add('numbered');
+                    cell.textContent = index + 1;
+                    board[pos.row][pos.col] = index + 1;
+                });
+            }
+            
+            updateStats();
+        }
+        
+        // Restore game state
+        function restoreGameState() {
+            const zipContainer = document.getElementById('zipContainer');
+            zipContainer.innerHTML = '';
+            
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'zip-cell';
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    
+                    if (blocked[row][col]) {
+                        cell.classList.add('blocked');
+                        cell.textContent = '⬛';
+                    } else {
+                        cell.onclick = () => clickCell(row, col);
+                        
+                        if (board[row][col] > 0) {
+                            if (board[row][col] < currentNumber) {
+                                cell.classList.add('connected');
+                            } else if (board[row][col] === currentNumber) {
+                                cell.classList.add('current');
+                            } else {
+                                cell.classList.add('numbered');
+                            }
+                            cell.textContent = board[row][col];
+                        }
+                    }
+                    
+                    zipContainer.appendChild(cell);
+                }
+            }
+            
+            if (gameWon) {
+                document.getElementById('flag').style.display = 'block';
+            }
+        }
+        
+        // Handle cell click
+        function clickCell(row, col) {
+            if (gameWon || blocked[row][col]) return;
+            
+            const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            
+            // Check if this is the next number in sequence
+            if (board[row][col] === currentNumber) {
+                // Mark as connected
+                cell.classList.remove('numbered', 'current');
+                cell.classList.add('connected');
+                currentNumber++;
+                
+                // Update current number indicator
+                const nextCell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                if (nextCell && nextCell.textContent == currentNumber) {
+                    nextCell.classList.add('current');
+                }
+                
+                saveGameState();
+                updateStats();
+                
+                // Check if game is won
+                if (currentNumber > 9) {
+                    gameWon = true;
+                    saveGameState();
+                    showMessage('🎉 Perfect! You connected all the dots!', 'success');
+                    document.getElementById('flag').style.display = 'block';
+                } else {
+                    showMessage(`✅ Connected ${currentNumber - 1}! Next: ${currentNumber}`, 'success');
+                }
+            } else if (board[row][col] > 0) {
+                showMessage('❌ Connect the dots in order!', 'error');
+            } else {
+                showMessage('❌ Click on numbered dots to connect them!', 'error');
+            }
+        }
+        
+        // Check if solution is correct
+        function checkSolution() {
+            if (currentNumber > 9) {
+                showMessage('🎉 You already solved it!', 'success');
+                return;
+            }
+            
+            let connectedCount = 0;
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 3; col++) {
+                    if (board[row][col] > 0 && board[row][col] < currentNumber) {
+                        connectedCount++;
+                    }
+                }
+            }
+            
+            showMessage(`📊 Progress: ${connectedCount}/9 dots connected. Next: ${currentNumber}`, '');
+        }
+        
+        // Clear the board
+        function clearBoard() {
+            board = Array(5).fill().map(() => Array(5).fill(0));
+            currentNumber = 1;
+            gameWon = false;
+            const puzzle = generatePuzzle();
+            blocked = puzzle.blocked;
+            numberedPositions = puzzle.numberedPositions;
+            
+            document.querySelectorAll('.zip-cell').forEach(cell => {
+                cell.classList.remove('numbered', 'connected', 'current', 'blocked');
+                cell.textContent = '';
+            });
+            
+            // Recreate the puzzle
+            initGame();
+            
+            document.getElementById('flag').style.display = 'none';
+            showMessage('🧹 Board cleared! Start connecting dots from 1.', '');
+        }
+        
+        // Show hint
+        function showHint() {
+            const hints = [
+                "💡 Connect the numbered dots in order: 1→2→3→4→5→6→7→8→9",
+                "💡 Look for the next number in sequence and click on it",
+                "💡 The path should cover all 9 cells in the grid",
+                "💡 Plan your moves to create an efficient path"
+            ];
+            
+            const randomHint = hints[Math.floor(Math.random() * hints.length)];
+            showMessage(randomHint, '');
+        }
+        
+        // Update stats
+        function updateStats() {
+            document.getElementById('currentNumber').textContent = currentNumber;
+            
+            let connectedCount = 0;
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    if (board[row][col] > 0 && board[row][col] < currentNumber) {
+                        connectedCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('connectedCount').textContent = connectedCount;
+        }
+        
+        // Show message
+        function showMessage(text, type) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = `message ${type}`;
+        }
+        
+        // Initialize game
+        initGame();
+        showMessage('🎃 Start connecting dots from number 1!', '');
+    </script>
+</body>
+</html>
