@@ -296,8 +296,6 @@
         <p>🎃 Fill the grid so each row and column has equal suns (☀️) and moons (🌑)</p>
         <p>🔗 No more than 2 suns or moons can be next to each other</p>
         <p>⚠️ Click empty cells to cycle through: empty → sun → moon → empty</p>
-        <p>👻 Two cells with a "=" sign between them should contain circles of the same type.</p>
-        <p>🦇 Two cells with a "x" sign between them should contain circles of the opposite type.</p>
     </div>
     
     <div class="game-container">
@@ -349,9 +347,7 @@
         // direction: 'right', 'bottom'
         // type: 'equal' (=), 'different' (x)
         const constraints = [
-            // [0, 0, 'right', 'different', 0, 2],  // Row 0: Cell 0 and Cell 2 should be different
-            // [1, 1, 'bottom', 'equal', 2, 1],    // Column 1: Row 1 and Row 2 should be equal
-            // [2, 3, 'right', 'equal', 2, 5],     // Row 2: Cell 3 and Cell 5 should be equal
+            // [1, 1, 'bottom', 'different', 2, 1],    // Column 1: Row 1 and Row 2 should be equal
             // [3, 2, 'bottom', 'different', 5, 2], // Column 2: Row 3 and Row 5 should be different
             // [4, 1, 'right', 'different', 4, 3],  // Row 4: Cell 1 and Cell 3 should be different
             // [0, 4, 'bottom', 'equal', 2, 4]      // Column 4: Row 0 and Row 2 should be equal
@@ -683,8 +679,6 @@
             const hints = [
                 "💡 Each row and column must have exactly 3 suns and 3 moons",
                 "💡 No more than 2 suns or moons can be next to each other",
-                "💡 Green '=' means those cells must be the same (both suns or both moons)",
-                "💡 Red '×' means those cells must be different (one sun, one moon)",
                 "💡 Start by placing suns and moons to balance rows and columns",
                 "💡 Think about the constraints: 6x6 grid, 3 suns + 3 moons per row/column"
             ];
