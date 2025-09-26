@@ -522,9 +522,9 @@
         // Toggle cell state
         function toggleCell(row, col) {
             if (gameWon || seeded[row][col]) return;
-            
+
             const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-            
+
             // Cycle through: empty → sun → moon → empty
             if (board[row][col] === '') {
                 board[row][col] = 'sun';
@@ -540,12 +540,29 @@
                 cell.classList.remove('moon');
                 cell.textContent = '';
             }
-            
+
             saveGameState();
             updateStats();
             checkForErrors();
+
+            // Auto-check solution when board is full
+            if (isBoardFull()) {
+                checkSolution();
+            }
         }
         
+        // Check if board is full
+        function isBoardFull() {
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 6; col++) {
+                    if (board[row][col] === '') {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         // Check for rule violations
         function checkForErrors() {
             // Clear previous error states
@@ -574,6 +591,7 @@
                         document.querySelector(`[data-row="${row}"][data-col="${col}"]`).classList.add('error');
                         document.querySelector(`[data-row="${row + 1}"][data-col="${col}"]`).classList.add('error');
                         document.querySelector(`[data-row="${row + 2}"][data-col="${col}"]`).classList.add('error');
+                        document.querySelector(`[data-row="${row + 3}"][data-col="${col}"]`).classList.add('error');
                         hasErrors = true;
                     }
                 }
