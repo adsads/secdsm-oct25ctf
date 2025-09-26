@@ -109,27 +109,9 @@
                 font-size: 1.2rem;
             }
 
+            /* Hide custom keyboard on mobile - use native keyboard instead */
             .keyboard {
-                max-width: 100%;
-                overflow-x: auto;
-                margin-top: 15px;
-            }
-
-            .keyboard-row {
-                min-width: 320px;
-                gap: 3px;
-            }
-
-            .key {
-                padding: 8px 10px;
-                min-width: 30px;
-                font-size: 0.9rem;
-                border-radius: 4px;
-            }
-
-            .key.wide {
-                padding: 8px 15px;
-                min-width: 50px;
+                display: none;
             }
 
             .game-container {
@@ -341,6 +323,21 @@
             color: #a8e6cf;
             line-height: 1.6;
         }
+
+        /* Hidden input for native mobile keyboard */
+        .word-input {
+            position: fixed;
+            top: -100px;
+            left: -100px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .word-input:focus {
+            outline: none;
+        }
     </style>
 </head>
 <body>
@@ -372,6 +369,9 @@
         <div class="controls">
             <button onclick="clearGame()" class="clear-btn">🧹 Clear Game</button>
         </div>
+
+        <!-- Hidden input for native mobile keyboard -->
+        <input type="text" id="wordInput" class="word-input" maxlength="5" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false">
         
         <div class="keyboard">
             <div class="keyboard-row">
@@ -721,7 +721,10 @@
             showMessage('🧹 Game cleared! Start fresh!', '');
         }
         
-        // Event listeners
+        // Get input field reference
+        const wordInput = document.getElementById('wordInput');
+
+        // Event listeners for physical keyboard
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 handleKeyPress('ENTER');
@@ -731,8 +734,39 @@
                 handleKeyPress(e.key.toUpperCase());
             }
         });
-        
-        // Virtual keyboard
+
+        // Handle input field events for mobile/native keyboard
+        wordInput.addEventListener('input', (e) => {
+            const value = e.target.value.toUpperCase();
+            const lastChar = value.slice(-1);
+
+            // Only process if it's a letter
+            if (lastChar.match(/[A-Z]/)) {
+                handleKeyPress(lastChar);
+                // Clear the input so user can type the next letter
+                e.target.value = '';
+            }
+        });
+
+        // Handle backspace in input field
+        wordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace') {
+                e.preventDefault();
+                handleKeyPress('BACKSPACE');
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                handleKeyPress('ENTER');
+            }
+        });
+
+        // Focus input field when clicking on game board (mobile)
+        document.getElementById('gameBoard').addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                wordInput.focus();
+            }
+        });
+
+        // Virtual keyboard (desktop only)
         document.querySelectorAll('.key').forEach(key => {
             key.addEventListener('click', () => {
                 const keyValue = key.getAttribute('data-key');
