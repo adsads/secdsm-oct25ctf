@@ -327,16 +327,41 @@
         /* Hidden input for native mobile keyboard */
         .word-input {
             position: fixed;
-            top: -100px;
-            left: -100px;
-            width: 1px;
-            height: 1px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             opacity: 0;
             pointer-events: none;
+            z-index: -1;
         }
 
         .word-input:focus {
             outline: none;
+        }
+
+        /* Mobile input trigger button */
+        .mobile-input-btn {
+            display: none;
+            background: rgba(255, 107, 107, 0.2);
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-input-btn:hover {
+            background: rgba(255, 107, 107, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-input-btn {
+                display: block;
+            }
         }
     </style>
 </head>
@@ -369,6 +394,11 @@
         <div class="controls">
             <button onclick="clearGame()" class="clear-btn">🧹 Clear Game</button>
         </div>
+
+        <!-- Mobile input trigger button -->
+        <button onclick="focusMobileInput()" class="mobile-input-btn" id="mobileInputBtn">
+            ⌨️ Type Your Guess
+        </button>
 
         <!-- Hidden input for native mobile keyboard -->
         <input type="text" id="wordInput" class="word-input" maxlength="5" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false">
@@ -759,12 +789,32 @@
             }
         });
 
+        // Focus mobile input function
+        function focusMobileInput() {
+            wordInput.focus();
+            wordInput.click(); // Some mobile browsers need this
+        }
+
         // Focus input field when clicking on game board (mobile)
         document.getElementById('gameBoard').addEventListener('click', () => {
             if (window.innerWidth <= 768) {
-                wordInput.focus();
+                focusMobileInput();
             }
         });
+
+        // Auto-focus input on mobile when game starts
+        function checkMobileAndFocus() {
+            if (window.innerWidth <= 768 && !gameOver) {
+                // Small delay to ensure page is loaded
+                setTimeout(() => {
+                    focusMobileInput();
+                }, 500);
+            }
+        }
+
+        // Check for mobile on load and resize
+        window.addEventListener('load', checkMobileAndFocus);
+        window.addEventListener('resize', checkMobileAndFocus);
 
         // Virtual keyboard (desktop only)
         document.querySelectorAll('.key').forEach(key => {
