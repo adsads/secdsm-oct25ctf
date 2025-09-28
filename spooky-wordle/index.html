@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>🔤 Spooky Wordle - Halloween Mini CTF</title>
     <style>
         * {
@@ -327,17 +327,34 @@
         /* Hidden input for native mobile keyboard */
         .word-input {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: -100px;
+            left: -100px;
+            width: 1px;
+            height: 1px;
             opacity: 0;
             pointer-events: none;
             z-index: -1;
+            font-size: 16px;
         }
 
         .word-input:focus {
             outline: none;
+        }
+
+        /* iOS specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            .word-input {
+                font-family: system-ui, -apple-system, sans-serif;
+                -webkit-user-select: text;
+                -webkit-appearance: none;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            /* Prevent zoom on input focus for iOS */
+            .word-input:focus {
+                -webkit-text-size-adjust: 100%;
+                font-size: 16px !important;
+            }
         }
 
         /* Mobile input trigger button */
@@ -346,21 +363,51 @@
             background: rgba(255, 107, 107, 0.2);
             border: 2px solid #ff6b6b;
             color: #ff6b6b;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 8px;
             font-size: 1rem;
             cursor: pointer;
-            margin: 10px 0;
+            margin: 15px 0;
             transition: all 0.3s ease;
+            font-weight: bold;
+            min-height: 48px; /* Touch target size */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .mobile-input-btn:hover {
             background: rgba(255, 107, 107, 0.3);
         }
 
+        .mobile-input-btn:active {
+            background: rgba(255, 107, 107, 0.4);
+            transform: scale(0.98);
+        }
+
         @media (max-width: 768px) {
             .mobile-input-btn {
                 display: block;
+            }
+        }
+
+        /* Additional iOS fixes */
+        @supports (-webkit-touch-callout: none) {
+            body {
+                -webkit-text-size-adjust: 100%;
+                -webkit-font-smoothing: antialiased;
+                -webkit-user-select: none;
+            }
+
+            .cell {
+                -webkit-user-select: none;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .key {
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .clear-btn {
+                -webkit-tap-highlight-color: transparent;
             }
         }
     </style>
@@ -789,10 +836,67 @@
             }
         });
 
-        // Focus mobile input function
+        // iOS-specific input handling
+        let isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        let inputBuffer = '';
+
+        if (isIOS) {
+            // Enhanced iOS input handling
+            wordInput.addEventListener('input', (e) => {
+                const value = e.target.value;
+
+                // Handle iOS input differently
+                if (value.length > inputBuffer.length) {
+                    // Character was added
+                    const newChar = value.slice(-1).toUpperCase();
+                    if (newChar.match(/[A-Z]/)) {
+                        handleKeyPress(newChar);
+                    }
+                } else if (value.length < inputBuffer.length) {
+                    // Character was deleted (backspace)
+                    handleKeyPress('BACKSPACE');
+                }
+
+                inputBuffer = value;
+                e.target.value = '';
+            });
+
+            // Handle keydown for Enter key on iOS
+            wordInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleKeyPress('ENTER');
+                }
+            });
+        }
+
+        // Focus mobile input function with iOS improvements
         function focusMobileInput() {
+            if (isIOS) {
+                // iOS-specific focus handling
+                wordInput.style.position = 'fixed';
+                wordInput.style.top = '50%';
+                wordInput.style.left = '50%';
+                wordInput.style.width = '1px';
+                wordInput.style.height = '1px';
+                wordInput.style.opacity = '0.01'; // Slightly visible for iOS
+                wordInput.style.zIndex = '9999';
+                wordInput.style.background = 'transparent';
+            }
+
             wordInput.focus();
-            wordInput.click(); // Some mobile browsers need this
+
+            if (isIOS) {
+                // Reset position after focus
+                setTimeout(() => {
+                    wordInput.style.position = 'fixed';
+                    wordInput.style.top = '-100px';
+                    wordInput.style.left = '-100px';
+                    wordInput.style.width = '1px';
+                    wordInput.style.height = '1px';
+                    wordInput.style.opacity = '0';
+                }, 100);
+            }
         }
 
         // Focus input field when clicking on game board (mobile)
