@@ -392,16 +392,22 @@
             const isCorrect = selectedIndex === question.correct;
 
             const feedback = document.getElementById('feedback');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Disable button to prevent multiple submissions
+            submitBtn.disabled = true;
 
             if (isCorrect) {
                 correctAnswers++;
                 feedback.textContent = "✅ Correct! Well done!";
                 feedback.className = "feedback success";
-                document.getElementById('submitBtn').textContent = "Next Question";
+                submitBtn.textContent = "Next Question";
 
                 // Check if all questions are answered correctly
                 if (correctAnswers === questions.length) {
-                    showFlag();
+                    setTimeout(() => {
+                        showFlag();
+                    }, 1500);
                 } else {
                     setTimeout(() => {
                         nextQuestion();
@@ -410,7 +416,7 @@
             } else {
                 feedback.textContent = `❌ Wrong! The correct answer was: "${question.options[question.correct]}". Back to question 1!`;
                 feedback.className = "feedback error";
-                document.getElementById('submitBtn').textContent = "Try Again";
+                submitBtn.textContent = "Try Again";
 
                 // Reset to beginning after showing the wrong answer
                 setTimeout(() => {
@@ -434,6 +440,14 @@
                     The flag is yours!
                 </div>
             `;
+
+            // Notify parent window that flag was found
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({
+                    type: 'FLAG_FOUND',
+                    challenge: 'horror-trivia'
+                }, '*');
+            }
         }
 
         // Start the game when page loads
