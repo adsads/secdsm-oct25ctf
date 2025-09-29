@@ -812,40 +812,16 @@
             }
         });
 
-        // Handle input field events for mobile/native keyboard
-        wordInput.addEventListener('input', (e) => {
-            const value = e.target.value.toUpperCase();
-            const lastChar = value.slice(-1);
-
-            // Only process if it's a letter
-            if (lastChar.match(/[A-Z]/)) {
-                handleKeyPress(lastChar);
-                // Clear the input so user can type the next letter
-                e.target.value = '';
-            }
-        });
-
-        // Handle backspace in input field
-        wordInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Backspace') {
-                e.preventDefault();
-                handleKeyPress('BACKSPACE');
-            } else if (e.key === 'Enter') {
-                e.preventDefault();
-                handleKeyPress('ENTER');
-            }
-        });
-
-        // iOS-specific input handling
+        // Mobile input handling
         let isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         let inputBuffer = '';
 
-        if (isIOS) {
-            // Enhanced iOS input handling
-            wordInput.addEventListener('input', (e) => {
-                const value = e.target.value;
+        // Unified input handling for both iOS and Android
+        wordInput.addEventListener('input', (e) => {
+            const value = e.target.value;
 
-                // Handle iOS input differently
+            if (isIOS) {
+                // iOS-specific handling
                 if (value.length > inputBuffer.length) {
                     // Character was added
                     const newChar = value.slice(-1).toUpperCase();
@@ -856,19 +832,25 @@
                     // Character was deleted (backspace)
                     handleKeyPress('BACKSPACE');
                 }
-
-                inputBuffer = value;
-                e.target.value = '';
-            });
-
-            // Handle keydown for Enter key on iOS
-            wordInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleKeyPress('ENTER');
+            } else {
+                // Android and other mobile browsers
+                const lastChar = value.slice(-1);
+                if (lastChar.match(/[A-Z]/)) {
+                    handleKeyPress(lastChar);
                 }
-            });
-        }
+            }
+
+            inputBuffer = value;
+            e.target.value = '';
+        });
+
+        // Handle keydown for Enter key
+        wordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleKeyPress('ENTER');
+            }
+        });
 
         // Focus mobile input function with iOS improvements
         function focusMobileInput() {
