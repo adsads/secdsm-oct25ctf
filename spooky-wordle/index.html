@@ -814,33 +814,23 @@
 
         // Mobile input handling
         let isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        let inputBuffer = '';
 
-        // Unified input handling for both iOS and Android
+        // Simplified input handling to prevent double typing
         wordInput.addEventListener('input', (e) => {
-            const value = e.target.value;
+            e.preventDefault();
 
-            if (isIOS) {
-                // iOS-specific handling
-                if (value.length > inputBuffer.length) {
-                    // Character was added
-                    const newChar = value.slice(-1).toUpperCase();
-                    if (newChar.match(/[A-Z]/)) {
-                        handleKeyPress(newChar);
-                    }
-                } else if (value.length < inputBuffer.length) {
-                    // Character was deleted (backspace)
-                    handleKeyPress('BACKSPACE');
-                }
-            } else {
-                // Android and other mobile browsers
-                const lastChar = value.slice(-1);
-                if (lastChar.match(/[A-Z]/)) {
-                    handleKeyPress(lastChar);
+            const value = e.target.value;
+            if (!value) return;
+
+            // Process each character in the input value
+            for (let i = 0; i < value.length; i++) {
+                const char = value[i].toUpperCase();
+                if (char.match(/[A-Z]/)) {
+                    handleKeyPress(char);
                 }
             }
 
-            inputBuffer = value;
+            // Clear the input immediately
             e.target.value = '';
         });
 
