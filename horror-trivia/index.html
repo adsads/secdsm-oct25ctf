@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧠 Horror Trivia - Halloween Mini CTF</title>
+    <title>🎃 Horror Movie Trivia Challenge</title>
     <style>
         * {
             margin: 0;
@@ -12,14 +12,26 @@
         }
 
         body {
-            font-family: 'Courier New', monospace;
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
-            color: #ff6b6b;
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #0d1117, #1a2332, #2d1b69);
+            color: #e6edf3;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid #8b5cf6;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
         }
 
         .header {
@@ -29,172 +41,120 @@
 
         h1 {
             font-size: 2.5rem;
+            color: #f97316;
             margin-bottom: 10px;
-            color: #ff6b6b;
-            text-shadow: 0 0 10px #ff6b6b;
+            text-shadow: 0 0 10px #f97316;
         }
 
         .subtitle {
-            color: #ffd93d;
+            color: #fbbf24;
+            font-size: 1.2rem;
             margin-bottom: 20px;
         }
 
         .back-link {
-            color: #a8e6cf;
+            color: #60a5fa;
             text-decoration: none;
-            margin-bottom: 20px;
+            font-weight: bold;
             display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
         }
 
         .back-link:hover {
-            color: #ffd93d;
+            color: #fbbf24;
+            background: rgba(251, 191, 36, 0.1);
         }
 
-        .game-container {
-            max-width: 900px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 30px;
-        }
-
-        .trivia-container {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 30px;
-            border: 2px solid #ff6b6b;
-            width: 100%;
-        }
-
-        .question-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border-left: 4px solid #ffd93d;
-            display: none;
-        }
-
-        .question-card.active {
-            display: block;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .question-container {
+            margin-bottom: 30px;
         }
 
         .question-number {
-            color: #ffd93d;
-            font-size: 1.2rem;
-            font-weight: bold;
+            color: #fbbf24;
+            font-size: 1.1rem;
             margin-bottom: 15px;
+            font-weight: bold;
         }
 
-        .question-text {
-            color: #a8e6cf;
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            line-height: 1.5;
+        .question {
+            color: #e6edf3;
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            line-height: 1.4;
         }
 
         .options {
             display: grid;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
         .option {
             background: rgba(255, 255, 255, 0.05);
-            border: 2px solid #666;
-            border-radius: 8px;
-            padding: 15px;
+            border: 2px solid #4b5563;
+            border-radius: 10px;
+            padding: 15px 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            color: #ff6b6b;
+            color: #e6edf3;
+            font-size: 1.1rem;
         }
 
         .option:hover {
-            background: rgba(255, 107, 107, 0.2);
-            border-color: #ffd93d;
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
             transform: translateY(-2px);
         }
 
-        .option.correct {
-            background: rgba(76, 175, 80, 0.3);
-            border-color: #4caf50;
-            color: #4caf50;
-        }
-
-        .option.incorrect {
-            background: rgba(244, 67, 54, 0.3);
-            border-color: #f44336;
-            color: #f44336;
-        }
-
         .option.selected {
-            background: rgba(255, 217, 61, 0.2);
-            border-color: #ffd93d;
-            color: #ffd93d;
+            background: rgba(139, 92, 246, 0.3);
+            border-color: #8b5cf6;
+            color: #fbbf24;
         }
 
         .feedback {
             min-height: 40px;
-            margin-top: 15px;
-            font-size: 1rem;
+            margin: 20px 0;
+            font-size: 1.2rem;
             text-align: center;
-        }
-
-        .stats-container {
-            display: flex;
-            justify-content: space-around;
-            margin: 30px 0;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            width: 100%;
-        }
-
-        .stat {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 2rem;
             font-weight: bold;
-            color: #ffd93d;
         }
 
-        .stat-label {
-            color: #a8e6cf;
-            font-size: 0.9rem;
+        .success {
+            color: #10b981;
+        }
+
+        .error {
+            color: #ef4444;
         }
 
         .controls {
             display: flex;
             gap: 15px;
-            margin-bottom: 20px;
             justify-content: center;
+            margin-top: 30px;
         }
 
         .btn {
-            padding: 12px 24px;
-            border: 2px solid #ff6b6b;
-            background: rgba(255, 107, 107, 0.2);
-            color: #ff6b6b;
+            padding: 12px 30px;
+            border: 2px solid #8b5cf6;
+            background: rgba(139, 92, 246, 0.2);
+            color: #e6edf3;
             cursor: pointer;
             border-radius: 8px;
             font-weight: bold;
-            transition: all 0.3s ease;
             font-size: 1rem;
+            transition: all 0.3s ease;
+            min-width: 120px;
         }
 
-        .btn:hover {
-            background: rgba(255, 107, 107, 0.4);
-            border-color: #ffd93d;
-            color: #ffd93d;
+        .btn:hover:not(:disabled) {
+            background: rgba(139, 92, 246, 0.4);
+            border-color: #fbbf24;
+            color: #fbbf24;
         }
 
         .btn:disabled {
@@ -202,336 +162,213 @@
             cursor: not-allowed;
         }
 
-        .btn.primary {
-            background: rgba(76, 175, 80, 0.3);
-            border-color: #4caf50;
-            color: #4caf50;
-        }
-
-        .btn.primary:hover {
-            background: rgba(76, 175, 80, 0.5);
-            border-color: #66bb6a;
-            color: #66bb6a;
-        }
-
-        .message {
-            text-align: center;
-            margin: 20px 0;
-            font-size: 1.2rem;
-            min-height: 30px;
-        }
-
-        .success {
-            color: #4caf50;
-            animation: glow 1s ease-in-out infinite alternate;
-        }
-
-        .error {
-            color: #f44336;
-        }
-
         .flag {
-            color: #ffd93d;
-            font-weight: bold;
-            margin-top: 20px;
-            padding: 15px;
-            border: 2px solid #ffd93d;
+            background: rgba(16, 185, 129, 0.2);
+            border: 2px solid #10b981;
             border-radius: 10px;
-            background: rgba(255, 217, 61, 0.1);
-            display: none;
+            padding: 20px;
+            margin-top: 30px;
             text-align: center;
+            display: none;
         }
 
-        @keyframes glow {
-            from { text-shadow: 0 0 5px currentColor; }
-            to { text-shadow: 0 0 15px currentColor; }
+        .flag h2 {
+            color: #10b981;
+            margin-bottom: 15px;
+        }
+
+        .flag-code {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            color: #fbbf24;
+            font-weight: bold;
         }
 
         .instructions {
-            max-width: 600px;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid #fbbf24;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
             text-align: center;
-            margin-bottom: 20px;
-            color: #a8e6cf;
-            line-height: 1.6;
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            margin: 20px 0;
-            overflow: hidden;
+        .instructions p {
+            margin: 8px 0;
+            color: #fbbf24;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4caf50, #ffd93d);
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-
-        .category-indicator {
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-            color: #ffd93d;
-        }
-
+        /* Mobile Responsive */
         @media (max-width: 768px) {
-            .game-container {
+            body {
                 padding: 15px;
             }
 
-            .trivia-container {
-                padding: 20px;
+            .container {
+                padding: 20px 15px;
             }
 
-            .question-card {
-                padding: 20px;
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .question {
+                font-size: 1.1rem;
+            }
+
+            .option {
+                padding: 12px 15px;
+                font-size: 1rem;
+            }
+
+            .btn {
+                padding: 12px 25px;
+                min-width: 100px;
+                font-size: 0.9rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .question {
+                font-size: 1rem;
+            }
+
+            .option {
+                padding: 12px;
+                font-size: 0.95rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <a href="../index.html" class="back-link">← Back to Challenges</a>
-        <h1>🧠 Horror Trivia</h1>
-        <div class="subtitle">Test your knowledge of classic horror movies!</div>
-    </div>
-
-    <div class="instructions">
-        <p>🎃 Answer trivia questions about classic horror movies</p>
-        <p>👻 Each correct answer reveals part of the flag</p>
-        <p>🧟‍♂️ Get enough correct to unlock the complete flag!</p>
-        <p>⚰️ Questions are randomized - choose wisely!</p>
-    </div>
-
-    <div class="game-container">
-        <div class="stats-container">
-            <div class="stat">
-                <div class="stat-value" id="score">0</div>
-                <div class="stat-label">Score</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value" id="correctAnswers">0</div>
-                <div class="stat-label">Correct</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value" id="totalQuestions">10</div>
-                <div class="stat-label">Total</div>
-            </div>
+    <div class="container">
+        <div class="header">
+            <a href="../index.html" class="back-link">← Back to Challenges</a>
+            <h1>🎃 Horror Movie Trivia</h1>
+            <div class="subtitle">Test your knowledge of classic horror films!</div>
         </div>
 
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        <div class="instructions">
+            <p>🎃 Answer all questions correctly to reveal the flag</p>
+            <p>👻 Get one wrong? Start over from question 1!</p>
+            <p>🧟‍♂️ Only perfection unlocks the spooky secret</p>
         </div>
 
-        <div class="trivia-container">
-            <div class="category-indicator" id="categoryIndicator">Addams Family Trivia</div>
-
-            <div id="questionContainer">
-                <!-- Questions will be dynamically inserted here -->
-            </div>
-
-            <div class="controls">
-                <button class="btn" id="submitBtn" onclick="submitAnswer()" disabled>Submit Answer</button>
-                <button class="btn" id="nextBtn" onclick="nextQuestion()" style="display: none;">Next Question</button>
-                <button class="btn" onclick="showHint()">💡 Hint</button>
-            </div>
-
-            <div class="feedback" id="feedback"></div>
+        <div id="gameArea">
+            <!-- Game content will be inserted here -->
         </div>
 
-        <div class="message" id="message"></div>
-
-        <div class="flag" id="flag">
-            <h3>🎉 Congratulations! You completed the Horror Trivia! 🎉</h3>
-            <p><strong>Flag:</strong> <code id="dynamicFlag">SecDSM{computing_flag...}</code></p>
-            <p>You've proven your mastery of spooky knowledge!</p>
+        <div class="flag" id="flagContainer">
+            <h2>🎉 Congratulations! 🎉</h2>
+            <p>You've mastered all the horror trivia questions!</p>
+            <div class="flag-code" id="flagText">SecDSM{horror_master_2025}</div>
         </div>
     </div>
 
     <script>
-        // Trivia questions data - All Horror Movies
-        const triviaQuestions = [
+        // Horror Movie Trivia Questions
+        const questions = [
             {
-                category: "Horror Movies",
-                question: "In 'The Shining', what is the name of the hotel?",
+                question: "In 'The Shining', what is the name of the hotel where Jack Torrance works?",
                 options: ["Overlook Hotel", "Bates Motel", "Hill House", "Amityville House"],
-                correct: 0,
-                hint: "It's isolated in the mountains with a hedge maze"
+                correct: 0
             },
             {
-                category: "Horror Movies",
-                question: "Who directed 'Psycho'?",
-                options: ["Steven Spielberg", "Alfred Hitchcock", "John Carpenter", "George Romero"],
-                correct: 1,
-                hint: "He's known as the 'Master of Suspense'"
+                question: "Who directed the 1978 horror classic 'Halloween'?",
+                options: ["Wes Craven", "John Carpenter", "Tobe Hooper", "George Romero"],
+                correct: 1
             },
             {
-                category: "Horror Movies",
-                question: "What is the name of the demon in 'The Exorcist'?",
-                options: ["Beelzebub", "Pazuzu", "Mephisto", "Lucifer"],
-                correct: 1,
-                hint: "It's an ancient Mesopotamian demon"
+                question: "What is the name of the demon that possesses Regan in 'The Exorcist'?",
+                options: ["Beelzebub", "Pazuzu", "Mephistopheles", "Asmodeus"],
+                correct: 1
             },
             {
-                category: "Horror Movies",
-                question: "In 'Halloween', what is Michael Myers' mask originally from?",
-                options: ["Star Trek", "Captain Kirk", "William Shatner", "A cheap costume store"],
-                correct: 3,
-                hint: "It was bought from a discount store for $1.98"
+                question: "In 'A Nightmare on Elm Street', what street does Freddy Krueger haunt?",
+                options: ["Main Street", "Oak Street", "Elm Street", "Pine Street"],
+                correct: 2
             },
             {
-                category: "Horror Movies",
-                question: "What year was 'Night of the Living Dead' released?",
+                question: "What year was the original 'Night of the Living Dead' released?",
                 options: ["1968", "1978", "1958", "1988"],
-                correct: 0,
-                hint: "It was George Romero's first zombie film"
+                correct: 0
             },
             {
-                category: "Horror Movies",
+                question: "Who played the role of Hannibal Lecter in 'The Silence of the Lambs'?",
+                options: ["Jack Nicholson", "Robert De Niro", "Anthony Hopkins", "Jodie Foster"],
+                correct: 2
+            },
+            {
                 question: "In 'Scream', what is the name of the killer's mask?",
                 options: ["Hockey Mask", "Ghostface", "Ski Mask", "Clown Mask"],
-                correct: 1,
-                hint: "It's the iconic mask from the slasher film series"
+                correct: 1
             },
             {
-                category: "Horror Movies",
-                question: "What is the name of the hotel in 'The Bates Motel'?",
+                question: "What is the name of the hotel in Alfred Hitchcock's 'Psycho'?",
                 options: ["Bates Motel", "Overlook Hotel", "Hill House", "Amityville House"],
-                correct: 0,
-                hint: "It's from the movie 'Psycho' and its prequel series"
+                correct: 0
             },
             {
-                category: "Horror Movies",
-                question: "Who played Freddy Krueger in 'A Nightmare on Elm Street'?",
-                options: ["Robert Englund", "Kane Hodder", "Brad Dourif", "Doug Bradley"],
-                correct: 0,
-                hint: "He's the actor who brought the dream killer to life"
-            },
-            {
-                category: "Horror Movies",
-                question: "In 'The Ring', what do people die from after watching the video?",
-                options: ["7 days later", "24 hours later", "3 days later", "Immediately"],
-                correct: 0,
-                hint: "You have exactly one week after watching"
-            },
-            {
-                category: "Horror Movies",
-                question: "What is the name of the clown in Stephen King's 'IT'?",
-                options: ["Bozo", "Pennywise", "Krusty", "Ronald"],
-                correct: 1,
-                hint: "He terrorizes the children of Derry, Maine"
-            },
-            {
-                category: "Horror Movies",
-                question: "In 'Jaws', what is the name of the shark?",
-                options: ["Jaws", "Bruce", "White Death", "Moby Dick"],
-                correct: 1,
-                hint: "The mechanical shark used in filming was nicknamed this"
-            },
-            {
-                category: "Horror Movies",
-                question: "What year was 'The Texas Chain Saw Massacre' released?",
-                options: ["1974", "1978", "1980", "1972"],
-                correct: 0,
-                hint: "It was Tobe Hooper's breakthrough horror film"
-            },
-            {
-                category: "Horror Movies",
-                question: "Who directed 'Get Out'?",
+                question: "Who directed 'Get Out' (2017)?",
                 options: ["Ari Aster", "Robert Eggers", "Jordan Peele", "Jennifer Kent"],
-                correct: 2,
-                hint: "He's known for social commentary in horror films"
+                correct: 2
             },
             {
-                category: "Horror Movies",
-                question: "In 'Alien', what is the name of the spaceship?",
-                options: ["Nostromo", "Discovery", "Enterprise", "Serenity"],
-                correct: 0,
-                hint: "It's a commercial towing vehicle in the film"
-            },
-            {
-                category: "Horror Movies",
-                question: "What is the real name of the killer in 'Friday the 13th'?",
-                options: ["Jason Voorhees", "Michael Myers", "Freddy Krueger", "Leatherface"],
-                correct: 0,
-                hint: "He wears a hockey mask and carries a machete"
+                question: "In 'The Ring', how many days do you have to live after watching the cursed video?",
+                options: ["3 days", "7 days", "10 days", "14 days"],
+                correct: 1
             }
         ];
 
         let currentQuestionIndex = 0;
-        let score = 0;
         let correctAnswers = 0;
-        let selectedOption = null;
-        let gameCompleted = false;
-
-        // Simple hash function for flag generation
-        function simpleHash(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                const char = str.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash;
-            }
-            return Math.abs(hash).toString(16).toUpperCase().padStart(8, '0');
-        }
-
-        // Generate flag from answers
-        function generateFlagFromAnswers() {
-            const answersString = triviaQuestions.map(q => q.correct).join('');
-            const hash = simpleHash(answersString);
-            return `SecDSM{horror_trivia_${hash}}`;
-        }
-
-        // Shuffle array function
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
 
         // Initialize game
         function initGame() {
-            // Shuffle the questions for randomization
-            triviaQuestions = shuffleArray([...triviaQuestions]);
-            showQuestion(0);
-            updateStats();
+            currentQuestionIndex = 0;
+            correctAnswers = 0;
+            document.getElementById('flagContainer').style.display = 'none';
+            showQuestion();
         }
 
-        // Show specific question
-        function showQuestion(index) {
-            const question = triviaQuestions[index];
-            const container = document.getElementById('questionContainer');
+        // Display current question
+        function showQuestion() {
+            const gameArea = document.getElementById('gameArea');
+            const question = questions[currentQuestionIndex];
 
-            container.innerHTML = `
-                <div class="question-card active">
-                    <div class="question-number">Question ${index + 1} of ${triviaQuestions.length}</div>
-                    <div class="question-text">${question.question}</div>
-                    <div class="options" id="optionsContainer">
-                        ${question.options.map((option, i) => `
-                            <div class="option" data-index="${i}" onclick="selectOption(${i})">
-                                ${String.fromCharCode(65 + i)}. ${option}
+            gameArea.innerHTML = `
+                <div class="question-container">
+                    <div class="question-number">Question ${currentQuestionIndex + 1} of ${questions.length}</div>
+                    <div class="question">${question.question}</div>
+                    <div class="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                ${option}
                             </div>
                         `).join('')}
                     </div>
                 </div>
+                <div class="feedback" id="feedback"></div>
+                <div class="controls">
+                    <button class="btn" id="submitBtn" onclick="submitAnswer()" disabled>Submit Answer</button>
+                </div>
             `;
-
-            // Update category indicator
-            document.getElementById('categoryIndicator').textContent = `${question.category} Trivia`;
-
-            // Reset state
-            selectedOption = null;
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('feedback').textContent = '';
         }
 
-        // Select an option
+        // Handle option selection
         function selectOption(index) {
             // Remove previous selection
             document.querySelectorAll('.option').forEach(opt => {
@@ -539,9 +376,7 @@
             });
 
             // Add selection to clicked option
-            const option = document.querySelector(`[data-index="${index}"]`);
-            option.classList.add('selected');
-            selectedOption = index;
+            document.querySelectorAll('.option')[index].classList.add('selected');
 
             // Enable submit button
             document.getElementById('submitBtn').disabled = false;
@@ -549,98 +384,62 @@
 
         // Submit answer
         function submitAnswer() {
-            if (selectedOption === null) return;
+            const selectedOption = document.querySelector('.option.selected');
+            if (!selectedOption) return;
 
-            const question = triviaQuestions[currentQuestionIndex];
-            const isCorrect = selectedOption === question.correct;
+            const selectedIndex = Array.from(selectedOption.parentNode.children).indexOf(selectedOption);
+            const question = questions[currentQuestionIndex];
+            const isCorrect = selectedIndex === question.correct;
 
-            // Update score and correct answers
-            if (isCorrect) {
-                score += 10;
-                correctAnswers++;
-            }
-
-            // Show feedback
             const feedback = document.getElementById('feedback');
-            const option = document.querySelector(`[data-index="${selectedOption}"]`);
 
             if (isCorrect) {
-                option.classList.add('correct');
-                feedback.textContent = `✅ Correct! +10 points`;
-                feedback.className = 'feedback success';
+                correctAnswers++;
+                feedback.textContent = "✅ Correct! Well done!";
+                feedback.className = "feedback success";
+                document.getElementById('submitBtn').textContent = "Next Question";
+
+                // Check if all questions are answered correctly
+                if (correctAnswers === questions.length) {
+                    showFlag();
+                } else {
+                    setTimeout(() => {
+                        nextQuestion();
+                    }, 1500);
+                }
             } else {
-                option.classList.add('incorrect');
-                // Show correct answer
-                const correctOption = document.querySelector(`[data-index="${question.correct}"]`);
-                correctOption.classList.add('correct');
-                feedback.textContent = `❌ Incorrect. The correct answer was: ${question.options[question.correct]}`;
-                feedback.className = 'feedback error';
-            }
+                feedback.textContent = `❌ Wrong! The correct answer was: "${question.options[question.correct]}". Back to question 1!`;
+                feedback.className = "feedback error";
+                document.getElementById('submitBtn').textContent = "Try Again";
 
-            // Disable submit button
-            document.getElementById('submitBtn').disabled = true;
-
-            // Show next button
-            document.getElementById('nextBtn').style.display = 'inline-block';
-
-            updateStats();
-
-            // Check if game is complete
-            if (currentQuestionIndex >= triviaQuestions.length - 1) {
-                completeGame();
+                // Reset to beginning after showing the wrong answer
+                setTimeout(() => {
+                    initGame();
+                }, 3000);
             }
         }
 
         // Move to next question
         function nextQuestion() {
-            if (currentQuestionIndex < triviaQuestions.length - 1) {
-                currentQuestionIndex++;
-                showQuestion(currentQuestionIndex);
-                document.getElementById('nextBtn').style.display = 'none';
-            }
+            currentQuestionIndex++;
+            showQuestion();
         }
 
-        // Complete the game
-        function completeGame() {
-            gameCompleted = true;
-
-            // Generate and display flag
-            const flag = generateFlagFromAnswers();
-            document.getElementById('dynamicFlag').textContent = flag;
-            document.getElementById('flag').style.display = 'block';
-
-            showMessage(`🎉 Trivia Complete! Final Score: ${score}/${triviaQuestions.length * 10}`, 'success');
-
-            // Hide next button
-            document.getElementById('nextBtn').style.display = 'none';
+        // Show the flag
+        function showFlag() {
+            document.getElementById('flagContainer').style.display = 'block';
+            document.getElementById('gameArea').innerHTML = `
+                <div style="text-align: center; color: #fbbf24; font-size: 1.2rem;">
+                    🎉 You've answered all questions correctly! 🎉<br>
+                    The flag is yours!
+                </div>
+            `;
         }
 
-        // Show hint
-        function showHint() {
-            const question = triviaQuestions[currentQuestionIndex];
-            showMessage(`💡 Hint: ${question.hint}`, '');
-        }
-
-        // Update statistics
-        function updateStats() {
-            document.getElementById('score').textContent = score;
-            document.getElementById('correctAnswers').textContent = correctAnswers;
-            document.getElementById('totalQuestions').textContent = triviaQuestions.length;
-
-            const progress = (currentQuestionIndex / triviaQuestions.length) * 100;
-            document.getElementById('progressFill').style.width = `${progress}%`;
-        }
-
-        // Show message
-        function showMessage(text, type) {
-            const message = document.getElementById('message');
-            message.textContent = text;
-            message.className = `message ${type}`;
-        }
-
-        // Initialize game
-        initGame();
-        showMessage('🧟‍♂️ Ready to test your horror knowledge?', '');
+        // Start the game when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initGame();
+        });
     </script>
 </body>
 </html>
