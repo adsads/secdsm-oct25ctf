@@ -301,7 +301,7 @@
         <a href="../index.html" class="back-link">← Back to Challenges</a>
         <h1>🔤 Spooky Wordle</h1>
         <div class="subtitle">Guess the Halloween word in 6 tries!</div>
-        <div style="font-size: 0.8rem; color: #888; margin-top: 5px;">v2.2 - Keyboard Fixed</div>
+        <div style="font-size: 0.8rem; color: #888; margin-top: 5px;">v2.3 - Keyboard Fixed</div>
     </div>
     
     <div class="instructions">
@@ -628,15 +628,18 @@
         }
         
         // Event listeners for physical keyboard
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                handleKeyPress('ENTER');
-            } else if (e.key === 'Backspace') {
-                handleKeyPress('BACKSPACE');
-            } else if (e.key.match(/[a-zA-Z]/)) {
-                handleKeyPress(e.key.toUpperCase());
-            }
-        });
+        if (!/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    handleKeyPress('ENTER');
+                } else if (e.key === 'Backspace') {
+                    handleKeyPress('BACKSPACE');
+                } else if (e.key.match(/[a-zA-Z]/)) {
+                    handleKeyPress(e.key.toUpperCase());
+                }
+            });
+        }
+
 
         // Mobile keyboard input handling - Simplified for iOS
         const mobileKeyboardInput = document.getElementById('mobileKeyboard');
