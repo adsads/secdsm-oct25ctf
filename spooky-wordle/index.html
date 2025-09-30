@@ -551,7 +551,7 @@
             // Move to next row
             currentRow++;
             currentCol = 0;
-            
+
             // Check if game over
             if (currentRow >= 6) {
                 gameOver = true;
@@ -559,8 +559,14 @@
             } else {
                 showMessage('Keep guessing...', '');
             }
-            
+
+            // 🔑 Re-focus keyboard for iOS/Android
+            if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+                focusMobileKeyboard();
+            }
+
             saveGameState();
+
         }
         
         // Check guess against target word
