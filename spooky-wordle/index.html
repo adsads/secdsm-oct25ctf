@@ -83,217 +83,49 @@
             transition: all 0.3s ease;
         }
 
-        /* Mobile responsiveness */
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .subtitle {
-                font-size: 1rem;
-            }
-
-            .instructions {
-                font-size: 0.9rem;
-                padding: 0 10px;
-                margin-bottom: 15px;
-            }
-
-            .cell {
-                width: 50px;
-                height: 50px;
-                font-size: 1.2rem;
-            }
-
-
-
-            .game-container {
-                gap: 15px;
-            }
-
-            .header {
-                margin-bottom: 20px;
-            }
-
-            .game-board {
-                margin-bottom: 15px;
-            }
-
-            .message {
-                font-size: 1rem;
-                margin: 15px 0;
-            }
-
-            .controls {
-                margin: 15px 0;
-            }
-
-            .clear-btn {
-                padding: 8px 16px;
-                font-size: 0.9rem;
-            }
+            body { padding: 10px; }
+            h1 { font-size: 2rem; }
+            .subtitle { font-size: 1rem; }
+            .instructions { font-size: 0.9rem; padding: 0 10px; margin-bottom: 15px; }
+            .cell { width: 50px; height: 50px; font-size: 1.2rem; }
+            .game-container { gap: 15px; }
+            .header { margin-bottom: 20px; }
+            .game-board { margin-bottom: 15px; }
+            .message { font-size: 1rem; margin: 15px 0; }
+            .controls { margin: 15px 0; }
+            .clear-btn { padding: 8px 16px; font-size: 0.9rem; }
         }
 
         @media (max-width: 480px) {
-            .cell {
-                width: 45px;
-                height: 45px;
-                font-size: 1rem;
-            }
-
-            .keyboard-row {
-                min-width: 280px;
-                gap: 2px;
-            }
-
-            .key {
-                padding: 6px 8px;
-                min-width: 25px;
-                font-size: 0.8rem;
-                border-radius: 3px;
-            }
-
-            .key.wide {
-                padding: 6px 12px;
-                min-width: 40px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .subtitle {
-                font-size: 0.9rem;
-            }
-
-            .instructions {
-                font-size: 0.8rem;
-                line-height: 1.4;
-            }
-
-            .message {
-                font-size: 0.9rem;
-            }
-
-            .clear-btn {
-                padding: 6px 12px;
-                font-size: 0.8rem;
-            }
+            .cell { width: 45px; height: 45px; font-size: 1rem; }
+            .keyboard-row { min-width: 280px; gap: 2px; }
+            .key { padding: 6px 8px; min-width: 25px; font-size: 0.8rem; border-radius: 3px; }
+            .key.wide { padding: 6px 12px; min-width: 40px; }
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 0.9rem; }
+            .instructions { font-size: 0.8rem; line-height: 1.4; }
+            .message { font-size: 0.9rem; }
+            .clear-btn { padding: 6px 12px; font-size: 0.8rem; }
         }
         
-        .cell.filled {
-            border-color: #666;
-            background: rgba(255, 255, 255, 0.2);
-        }
+        .cell.filled { border-color: #666; background: rgba(255, 255, 255, 0.2); }
+        .cell.correct { background: #4caf50; border-color: #4caf50; color: white; }
+        .cell.present { background: #ff9800; border-color: #ff9800; color: white; }
+        .cell.absent { background: #666; border-color: #666; color: white; }
         
-        .cell.correct {
-            background: #4caf50;
-            border-color: #4caf50;
-            color: white;
-        }
+        .message { text-align: center; margin: 20px 0; font-size: 1.2rem; min-height: 30px; }
+        .success { color: #4caf50; animation: glow 1s ease-in-out infinite alternate; }
+        .error { color: #f44336; }
+        .controls { text-align: center; margin: 20px 0; }
+        .clear-btn { background: #ff6b6b; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; }
+        .clear-btn:hover { background: #ff5252; transform: translateY(-2px); }
         
-        .cell.present {
-            background: #ff9800;
-            border-color: #ff9800;
-            color: white;
-        }
+        .flag { color: #ffd93d; font-weight: bold; margin-top: 20px; padding: 15px; border: 2px solid #ffd93d; border-radius: 10px; background: rgba(255, 217, 61, 0.1); display: none; }
         
-        .cell.absent {
-            background: #666;
-            border-color: #666;
-            color: white;
-        }
+        @keyframes glow { from { text-shadow: 0 0 5px currentColor; } to { text-shadow: 0 0 15px currentColor; } }
         
-
-        
-        .message {
-            text-align: center;
-            margin: 20px 0;
-            font-size: 1.2rem;
-            min-height: 30px;
-        }
-        
-        .success {
-            color: #4caf50;
-            animation: glow 1s ease-in-out infinite alternate;
-        }
-        
-        .error {
-            color: #f44336;
-        }
-        
-        .controls {
-            text-align: center;
-            margin: 20px 0;
-        }
-        
-        .clear-btn {
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .clear-btn:hover {
-            background: #ff5252;
-            transform: translateY(-2px);
-        }
-        
-        .flag {
-            color: #ffd93d;
-            font-weight: bold;
-            margin-top: 20px;
-            padding: 15px;
-            border: 2px solid #ffd93d;
-            border-radius: 10px;
-            background: rgba(255, 217, 61, 0.1);
-            display: none;
-        }
-        
-        @keyframes glow {
-            from { text-shadow: 0 0 5px currentColor; }
-            to { text-shadow: 0 0 15px currentColor; }
-        }
-        
-        .instructions {
-            max-width: 600px;
-            text-align: center;
-            margin-bottom: 20px;
-            color: #a8e6cf;
-            line-height: 1.6;
-        }
-
-
-
-        /* Additional iOS fixes */
-        @supports (-webkit-touch-callout: none) {
-            body {
-                -webkit-text-size-adjust: 100%;
-                -webkit-font-smoothing: antialiased;
-                -webkit-user-select: none;
-            }
-
-            .cell {
-                -webkit-user-select: none;
-                -webkit-tap-highlight-color: transparent;
-            }
-
-            .key {
-                -webkit-tap-highlight-color: transparent;
-            }
-
-            .clear-btn {
-                -webkit-tap-highlight-color: transparent;
-            }
-        }
+        .instructions { max-width: 600px; text-align: center; margin-bottom: 20px; color: #a8e6cf; line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -301,11 +133,11 @@
         <a href="../index.html" class="back-link">← Back to Challenges</a>
         <h1>🔤 Spooky Wordle</h1>
         <div class="subtitle">Guess the Halloween word in 6 tries!</div>
-        <div style="font-size: 0.8rem; color: #888; margin-top: 5px;">v2.3 - Keyboard Fixed</div>
+        <div style="font-size: 0.8rem; color: #888; margin-top: 5px;">v2.3 - Mobile Fixed</div>
     </div>
     
     <div class="instructions">
-        <p>🎃 Each guess must be a valid 5-letter word (any valid Wordle word works!)</p>
+        <p>🎃 Each guess must be a valid 5-letter word</p>
         <p>🟩 Green = Correct letter in correct position</p>
         <p>🟨 Orange = Correct letter in wrong position</p>
         <p>⬛ Gray = Letter not in the word</p>
@@ -313,473 +145,109 @@
     </div>
     
     <div class="game-container">
-        <!-- Hidden input to trigger mobile keyboard -->
-        <input type="text" id="mobileKeyboard" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none; width: 1px; height: 1px; font-size: 16px; z-index: 9999;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-
-        <!-- Alternative contenteditable for iOS -->
-        <div id="mobileInput" contenteditable="true" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none; width: 1px; height: 1px; font-size: 16px; z-index: 9998; outline: none; -webkit-user-select: text;" inputmode="text"></div>
-
+        <input type="text" id="mobileKeyboard" style="position:absolute; left:-9999px; opacity:0; pointer-events:none; width:1px; height:1px; font-size:16px; z-index:9999;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <div id="mobileInput" contenteditable="true" style="position:absolute; left:-9999px; opacity:0; pointer-events:none; width:1px; height:1px; font-size:16px; z-index:9998; outline:none; -webkit-user-select:text;" inputmode="text"></div>
         <div class="game-board" id="gameBoard"></div>
-
         <div class="message" id="message"></div>
-
-        <!-- Mobile keyboard trigger button -->
-        <button id="mobileTypeBtn" onclick="focusMobileKeyboard()" style="display: none; background: rgba(255, 255, 255, 0.1); border: 2px solid #ff6b6b; color: #ff6b6b; padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; margin: 10px 0;">📱 Tap to Type</button>
-
-        <!-- Submit button for mobile -->
-        <button id="submitBtn" onclick="submitGuess()" style="display: none; background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; margin: 10px 0; transition: all 0.3s ease;">✅ Submit Guess</button>
-
+        <button id="mobileTypeBtn" onclick="focusMobileKeyboard()" style="display:none; background:rgba(255,255,255,0.1); border:2px solid #ff6b6b; color:#ff6b6b; padding:8px 16px; border-radius:8px; font-size:0.9rem; cursor:pointer; margin:10px 0;">📱 Tap to Type</button>
         <div class="flag" id="flag">
             <h3>🎉 Congratulations! You found the flag! 🎉</h3>
             <p><strong>Flag:</strong> <code>SecDSM{spooky_wordle_master_2025}</code></p>
-            <p>You've mastered the art of spooky word guessing!</p>
         </div>
-        
         <div class="controls">
             <button onclick="clearGame()" class="clear-btn">🧹 Clear Game</button>
         </div>
-
-
-        
-
     </div>
 
-    <script>
-        // Halloween-themed 5-letter words (answers)
-        const halloweenWords = [
-            'GHOST', 'WITCH', 'DEMON', 'BEAST', 'SCARE', 'SPOOK', 'CREEP', 'BLOOD',
-            'GHOUL', 'SKULL', 'GRAVE', 'TOMBS', 'HAUNT', 'CURSE', 'SPELL', 'MAGIC',
-            'POWER', 'DEATH', 'NIGHT', 'PATCH', 'TRICK', 'TREAT', 'EERIE', 'SCARY',
-            'GOURD', 'BLOOD', 'SLIMY',
-        ];
-        // Valid Wordle words (loaded from file)
-        let validWords = [];
-        
-        // Load valid words from file
-        async function loadValidWords() {
-            try {
-                const response = await fetch('valid-wordle-words.txt');
-                const text = await response.text();
-                validWords = text.trim().split('\n').map(word => word.trim().toUpperCase());
-            } catch (error) {
-                console.error('Failed to load word list:', error);
-                // Fallback to a small set of common words
-                validWords = halloweenWords;
-            }
-        }
-        
-        // Select a random Halloween word for this game (obfuscated)
-        const halloweenWordIndex = Math.floor(Math.random() * halloweenWords.length);
-        const targetWord = halloweenWords[halloweenWordIndex];
-        
-        let currentRow = 0;
-        let currentCol = 0;
-        let gameWon = false;
-        let gameOver = false;
-        let gameState = {
-            guesses: [],
-            currentRow: 0,
-            currentCol: 0,
-            gameWon: false,
-            gameOver: false,
-            targetWord: targetWord
-        };
-        
-        // Save game state
-        function saveGameState() {
-            gameState.guesses = [];
-            gameState.currentRow = currentRow;
-            gameState.currentCol = currentCol;
-            gameState.gameWon = gameWon;
-            gameState.gameOver = gameOver;
-            
-            // Save current board state
-            for (let row = 0; row < 6; row++) {
-                for (let col = 0; col < 5; col++) {
-                    const cell = document.getElementById(`cell-${row}-${col}`);
-                    if (cell && cell.textContent) {
-                        gameState.guesses.push({
-                            row: row,
-                            col: col,
-                            letter: cell.textContent,
-                            classes: Array.from(cell.classList)
-                        });
-                    }
-                }
-            }
-            
-            localStorage.setItem('spookyWordleState', JSON.stringify(gameState));
-        }
-        
-        // Load game state
-        function loadGameState() {
-            const saved = localStorage.getItem('spookyWordleState');
-            if (saved) {
-                const savedState = JSON.parse(saved);
-                if (savedState.targetWord === targetWord) {
-                    gameState = savedState;
-                    currentRow = savedState.currentRow;
-                    currentCol = savedState.currentCol;
-                    gameWon = savedState.gameWon;
-                    gameOver = savedState.gameOver;
-                    return true;
-                }
-            }
-            return false;
-        }
-        
-        // Initialize game board
-        function initGame() {
-            const gameBoard = document.getElementById('gameBoard');
-            gameBoard.innerHTML = '';
-            
-            for (let row = 0; row < 6; row++) {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = 'row';
-                for (let col = 0; col < 5; col++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.id = `cell-${row}-${col}`;
-                    rowDiv.appendChild(cell);
-                }
-                gameBoard.appendChild(rowDiv);
-            }
-            
-            // Try to load saved state
-            if (loadGameState()) {
-                restoreGameState();
-            }
-        }
-        
-        // Restore game state
-        function restoreGameState() {
-            gameState.guesses.forEach(guess => {
-                const cell = document.getElementById(`cell-${guess.row}-${guess.col}`);
-                if (cell) {
-                    cell.textContent = guess.letter;
-                    cell.classList.add(...guess.classes);
-                }
-            });
-            
+<script>
+// Words
+const halloweenWords = ['GHOST','WITCH','DEMON','BEAST','SCARE','SPOOK','CREEP','BLOOD','GHOUL','SKULL','GRAVE','TOMBS','HAUNT','CURSE','SPELL','MAGIC','POWER','DEATH','NIGHT','PATCH','TRICK','TREAT','EERIE','SCARY','GOURD','SLIMY'];
+let validWords = [];
 
-            
-            if (gameWon) {
-                document.getElementById('flag').style.display = 'block';
-            }
-        }
-        
+// Load valid words
+async function loadValidWords() {
+    try {
+        const response = await fetch('valid-wordle-words.txt');
+        const text = await response.text();
+        validWords = text.trim().split('\n').map(w => w.trim().toUpperCase());
+    } catch { validWords = halloweenWords; }
+}
 
-        
-        // Handle keyboard input
-        function handleKeyPress(key) {
-            if (gameOver) return;
-            
-            if (key === 'ENTER') {
-                submitGuess();
-            } else if (key === 'BACKSPACE') {
-                deleteLetter();
-            } else if (key.length === 1 && key.match(/[A-Z]/)) {
-                addLetter(key);
-            }
-        }
-        
-        // Add letter to current cell
-        function addLetter(letter) {
-            if (currentCol < 5) {
-                const cell = document.getElementById(`cell-${currentRow}-${currentCol}`);
-                cell.textContent = letter;
-                cell.classList.add('filled');
-                currentCol++;
-                saveGameState();
-            }
-        }
-        
-        // Delete letter from current cell
-        function deleteLetter() {
-            if (currentCol > 0) {
-                currentCol--;
-                const cell = document.getElementById(`cell-${currentRow}-${currentCol}`);
-                cell.textContent = '';
-                cell.classList.remove('filled');
-                saveGameState();
-            }
-        }
-        
-        // Submit current guess
-        function submitGuess() {
-            if (currentCol !== 5) {
-                showMessage('Word must be 5 letters!', 'error');
-                return;
-            }
-            
-            // Get current guess
-            let guess = '';
-            for (let col = 0; col < 5; col++) {
-                const cell = document.getElementById(`cell-${currentRow}-${col}`);
-                guess += cell.textContent;
-            }
-            
-            // Check if word is valid
-            if (!validWords.includes(guess)) {
-                showMessage('Not a valid word!', 'error');
-                return;
-            }
-            
-            // Check guess against target word
-            const result = checkGuess(guess, targetWord);
-            
-            // Update cell colors
-            for (let col = 0; col < 5; col++) {
-                const cell = document.getElementById(`cell-${currentRow}-${col}`);
+const targetWord = halloweenWords[Math.floor(Math.random() * halloweenWords.length)];
+let currentRow = 0, currentCol = 0, gameWon = false, gameOver = false;
+let gameState = { guesses:[], currentRow:0, currentCol:0, gameWon:false, gameOver:false, targetWord };
 
-                if (result[col] === 'correct') {
-                    cell.classList.add('correct');
-                } else if (result[col] === 'present') {
-                    cell.classList.add('present');
-                } else {
-                    cell.classList.add('absent');
-                }
-            }
-            
-            // Check if won
-            if (guess === targetWord) {
-                gameWon = true;
-                gameOver = true;
-                showMessage('🎉 Spooky word found! You win!', 'success');
-                document.getElementById('flag').style.display = 'block';
-                saveGameState();
-                return;
-            }
-            
-            // Move to next row
-            currentRow++;
-            currentCol = 0;
+function saveGameState() { localStorage.setItem('spookyWordleState', JSON.stringify(gameState)); }
 
-            // Check if game over
-            if (currentRow >= 6) {
-                gameOver = true;
-                showMessage(`Game over! The word was: ${targetWord}`, 'error');
-            } else {
-                showMessage('Keep guessing...', '');
-            }
+function loadGameState() {
+    const saved = localStorage.getItem('spookyWordleState');
+    if (saved) { const s=JSON.parse(saved); if(s.targetWord===targetWord){gameState=s; currentRow=s.currentRow; currentCol=s.currentCol; gameWon=s.gameWon; gameOver=s.gameOver; return true;} }
+    return false;
+}
 
-            // 🔑 Re-focus keyboard for iOS/Android
-            if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
-                focusMobileKeyboard();
-            }
+function initGame() {
+    const board=document.getElementById('gameBoard'); board.innerHTML='';
+    for(let r=0;r<6;r++){const rowDiv=document.createElement('div'); rowDiv.className='row';
+        for(let c=0;c<5;c++){const cell=document.createElement('div'); cell.className='cell'; cell.id=`cell-${r}-${c}`; rowDiv.appendChild(cell);}
+        board.appendChild(rowDiv);}
+    if(loadGameState()) restoreGameState();
+}
 
-            saveGameState();
+function restoreGameState() { gameState.guesses.forEach(g=>{const cell=document.getElementById(`cell-${g.row}-${g.col}`); if(cell){cell.textContent=g.letter; cell.classList.add(...g.classes);}}); if(gameWon) document.getElementById('flag').style.display='block'; }
 
-        }
-        
-        // Check guess against target word
-        function checkGuess(guess, target) {
-            const result = new Array(5).fill('absent');
-            const targetLetters = target.split('');
-            const guessLetters = guess.split('');
-            
-            // First pass: mark correct letters
-            for (let i = 0; i < 5; i++) {
-                if (guessLetters[i] === targetLetters[i]) {
-                    result[i] = 'correct';
-                    targetLetters[i] = null;
-                    guessLetters[i] = null;
-                }
-            }
-            
-            // Second pass: mark present letters
-            for (let i = 0; i < 5; i++) {
-                if (guessLetters[i] !== null) {
-                    const index = targetLetters.indexOf(guessLetters[i]);
-                    if (index !== -1) {
-                        result[i] = 'present';
-                        targetLetters[index] = null;
-                    }
-                }
-            }
-            
-            return result;
-        }
-        
-        // Show message
-        function showMessage(text, type) {
-            const message = document.getElementById('message');
-            message.textContent = text;
-            message.className = `message ${type}`;
-        }
-        
-        // Clear game
-        function clearGame() {
-            localStorage.removeItem('spookyWordleState');
-            currentRow = 0;
-            currentCol = 0;
-            gameWon = false;
-            gameOver = false;
-            gameState = {
-                guesses: [],
-                currentRow: 0,
-                currentCol: 0,
-                gameWon: false,
-                gameOver: false,
-                targetWord: targetWord
-            };
-            
-            // Clear the board
-            document.querySelectorAll('.cell').forEach(cell => {
-                cell.textContent = '';
-                cell.classList.remove('filled', 'correct', 'present', 'absent');
-            });
-            
+function handleKeyPress(key) {
+    if(gameOver) return;
+    if(key==='ENTER'){submitGuess();}
+    else if(key==='BACKSPACE'){deleteLetter();}
+    else if(key.length===1 && key.match(/[A-Z]/)){addLetter(key);}
+}
 
-            
-            document.getElementById('flag').style.display = 'none';
-            showMessage('🧹 Game cleared! Start fresh!', '');
-        }
-        
-        // Event listeners for physical keyboard
-        if (!/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    handleKeyPress('ENTER');
-                } else if (e.key === 'Backspace') {
-                    handleKeyPress('BACKSPACE');
-                } else if (e.key.match(/[a-zA-Z]/)) {
-                    handleKeyPress(e.key.toUpperCase());
-                }
-            });
-        }
+function addLetter(letter){ if(currentCol<5){const cell=document.getElementById(`cell-${currentRow}-${currentCol}`); cell.textContent=letter; cell.classList.add('filled'); currentCol++;}}
+function deleteLetter(){ if(currentCol>0){currentCol--; const cell=document.getElementById(`cell-${currentRow}-${currentCol}`); cell.textContent=''; cell.classList.remove('filled');}}
 
+function submitGuess(){
+    if(currentCol!==5){showMessage('Word must be 5 letters!','error');return;}
+    let guess=''; for(let c=0;c<5;c++){guess+=document.getElementById(`cell-${currentRow}-${c}`).textContent;}
+    if(!validWords.includes(guess)){showMessage('Not a valid word!','error');return;}
+    const result=checkGuess(guess,targetWord);
+    for(let c=0;c<5;c++){const cell=document.getElementById(`cell-${currentRow}-${c}`); cell.classList.add(result[c]);}
+    if(guess===targetWord){gameWon=true; gameOver=true; showMessage('🎉 Spooky word found!','success'); document.getElementById('flag').style.display='block'; saveGameState(); return;}
+    currentRow++; currentCol=0;
+    if(currentRow>=6){gameOver=true; showMessage(`Game over! The word was: ${targetWord}`,'error');}
+    else{showMessage('Keep guessing...','');}
+    if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)){focusMobileKeyboard();}
+}
 
-        // Mobile keyboard input handling - Enhanced for better mobile support
-        const mobileKeyboardInput = document.getElementById('mobileKeyboard');
-        const mobileInputDiv = document.getElementById('mobileInput');
-        const submitBtn = document.getElementById('submitBtn');
-        let isProcessingInput = false;
-        let activeInputMethod = null; // Track which method is active
+function checkGuess(guess,target){const res=new Array(5).fill('absent'); const t=target.split(''); const g=guess.split(''); for(let i=0;i<5;i++){if(g[i]===t[i]){res[i]='correct'; t[i]=null; g[i]=null;}} for(let i=0;i<5;i++){if(g[i]!==null){const idx=t.indexOf(g[i]); if(idx!==-1){res[i]='present'; t[idx]=null;}}} return res;}
 
-        // Enhanced input handler that handles ENTER key and special characters
-        function handleMobileInput(value, source) {
-            if (isProcessingInput || !value) return;
-            isProcessingInput = true;
+function showMessage(t,cls){const m=document.getElementById('message'); m.textContent=t; m.className=`message ${cls}`;}
 
-            // Only process if this is from the active method
-            if (activeInputMethod && source !== activeInputMethod) {
-                isProcessingInput = false;
-                return;
-            }
+function clearGame(){localStorage.removeItem('spookyWordleState'); currentRow=0; currentCol=0; gameWon=false; gameOver=false; document.querySelectorAll('.cell').forEach(c=>{c.textContent=''; c.className='cell';}); document.getElementById('flag').style.display='none'; showMessage('🧹 Game cleared!','');}
 
-            // Handle ENTER key (check for enter key or newline)
-            if (value.includes('\n') || value.toLowerCase().includes('enter')) {
-                handleKeyPress('ENTER');
-                // Clear the input after processing
-                if (source === 'input') {
-                    mobileKeyboardInput.value = '';
-                } else if (source === 'contenteditable') {
-                    mobileInputDiv.textContent = '';
-                }
-                isProcessingInput = false;
-                return;
-            }
+// Desktop keyboard only
+if(!/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)){
+    document.addEventListener('keydown',e=>{if(e.key==='Enter')handleKeyPress('ENTER'); else if(e.key==='Backspace')handleKeyPress('BACKSPACE'); else if(e.key.match(/[a-zA-Z]/))handleKeyPress(e.key.toUpperCase());});
+}
 
-            // Handle BACKSPACE (check for backspace key)
-            if (value.includes('\b') || value.toLowerCase().includes('backspace')) {
-                handleKeyPress('BACKSPACE');
-                // Clear the input after processing
-                if (source === 'input') {
-                    mobileKeyboardInput.value = '';
-                } else if (source === 'contenteditable') {
-                    mobileInputDiv.textContent = '';
-                }
-                isProcessingInput = false;
-                return;
-            }
+// Mobile inputs
+const mobileKeyboardInput=document.getElementById('mobileKeyboard');
+const mobileInputDiv=document.getElementById('mobileInput');
+let activeInputMethod=null;
 
-            // Process each character (filter out duplicates and non-letters)
-            const processedChars = new Set();
-            for (let char of value) {
-                if (char.match(/[a-zA-Z]/i) && !processedChars.has(char.toUpperCase())) {
-                    handleKeyPress(char.toUpperCase());
-                    processedChars.add(char.toUpperCase());
-                }
-            }
+function handleMobileInput(val,src){if(!val)return; for(let ch of val){if(ch.match(/[a-zA-Z]/i)){handleKeyPress(ch.toUpperCase());}} if(src==='input')mobileKeyboardInput.value=''; else mobileInputDiv.textContent='';}
 
-            // Clear the input after processing
-            if (source === 'input') {
-                mobileKeyboardInput.value = '';
-            } else if (source === 'contenteditable') {
-                mobileInputDiv.textContent = '';
-            }
+mobileKeyboardInput.addEventListener('input',e=>{handleMobileInput(e.target.value,'input');});
+mobileKeyboardInput.addEventListener('keydown',e=>{if(e.key==='Enter'){handleKeyPress('ENTER'); e.preventDefault();} else if(e.key==='Backspace'){handleKeyPress('BACKSPACE'); e.preventDefault();}});
 
-            isProcessingInput = false;
-        }
+mobileInputDiv.addEventListener('input',e=>{handleMobileInput(e.target.textContent||'','contenteditable');});
+mobileInputDiv.addEventListener('keydown',e=>{if(e.key==='Enter'){handleKeyPress('ENTER'); e.preventDefault();} else if(e.key==='Backspace'){handleKeyPress('BACKSPACE'); e.preventDefault();}});
 
-        // Handle input from hidden input field
-        mobileKeyboardInput.addEventListener('input', (e) => {
-            handleMobileInput(e.target.value, 'input');
-        });
+function focusMobileKeyboard(){if(/iPad|iPhone|iPod/.test(navigator.userAgent)){mobileInputDiv.focus(); activeInputMethod='contenteditable'; setTimeout(()=>{if(document.activeElement!==mobileInputDiv){mobileKeyboardInput.focus(); activeInputMethod='input';}},100);} else if(/Android/i.test(navigator.userAgent)){mobileKeyboardInput.focus(); activeInputMethod='input';}}
 
-        // Handle input from contenteditable div (better for iOS)
-        mobileInputDiv.addEventListener('input', (e) => {
-            handleMobileInput(e.target.textContent || '', 'contenteditable');
-        });
+document.addEventListener('DOMContentLoaded',()=>{const board=document.getElementById('gameBoard'); const btn=document.getElementById('mobileTypeBtn'); if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))btn.style.display='block'; board.addEventListener('click',focusMobileKeyboard); board.addEventListener('touchstart',focusMobileKeyboard);});
 
-        // Focus mobile keyboard input when user interacts with game
-        function focusMobileKeyboard() {
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            const isAndroid = /Android/i.test(navigator.userAgent);
-
-            if (isIOS) {
-                // Try contenteditable first for iOS
-                mobileInputDiv.focus();
-                activeInputMethod = 'contenteditable';
-
-                // Fallback to input if contenteditable doesn't work
-                setTimeout(() => {
-                    if (document.activeElement !== mobileInputDiv) {
-                        mobileKeyboardInput.focus();
-                        activeInputMethod = 'input';
-                    }
-                }, 100);
-            } else if (isAndroid) {
-                mobileKeyboardInput.focus();
-                activeInputMethod = 'input';
-            }
-        }
-
-        // Add touch/click handlers to game board to trigger mobile keyboard
-        document.addEventListener('DOMContentLoaded', () => {
-            const gameBoard = document.getElementById('gameBoard');
-            const mobileTypeBtn = document.getElementById('mobileTypeBtn');
-            const submitBtn = document.getElementById('submitBtn');
-
-            // Show mobile buttons on mobile devices
-            if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
-                if (mobileTypeBtn) {
-                    mobileTypeBtn.style.display = 'block';
-                }
-                if (submitBtn) {
-                    submitBtn.style.display = 'block';
-                }
-            }
-
-            if (gameBoard) {
-                gameBoard.addEventListener('click', focusMobileKeyboard);
-                gameBoard.addEventListener('touchstart', focusMobileKeyboard);
-            }
-        });
-
-
-        
-        // Initialize game
-        async function initializeGame() {
-            await loadValidWords();
-            initGame();
-            showMessage('🎃 Start guessing Halloween words!', '');
-        }
-        
-        // Start the game
-        initializeGame();
-        
-    </script>
+async function initializeGame(){await loadValidWords(); initGame(); showMessage('🎃 Start guessing Halloween words!','');}
+initializeGame();
+</script>
 </body>
 </html>
