@@ -326,6 +326,9 @@
         <!-- Mobile keyboard trigger button -->
         <button id="mobileTypeBtn" onclick="focusMobileKeyboard()" style="display: none; background: rgba(255, 255, 255, 0.1); border: 2px solid #ff6b6b; color: #ff6b6b; padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; margin: 10px 0;">📱 Tap to Type</button>
 
+        <!-- Submit button for mobile -->
+        <button id="submitBtn" onclick="submitGuess()" style="display: none; background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; margin: 10px 0; transition: all 0.3s ease;">✅ Submit Guess</button>
+
         <div class="flag" id="flag">
             <h3>🎉 Congratulations! You found the flag! 🎉</h3>
             <p><strong>Flag:</strong> <code>SecDSM{spooky_wordle_master_2025}</code></p>
@@ -647,13 +650,14 @@
         }
 
 
-        // Mobile keyboard input handling - Simplified for iOS
+        // Mobile keyboard input handling - Enhanced for better mobile support
         const mobileKeyboardInput = document.getElementById('mobileKeyboard');
         const mobileInputDiv = document.getElementById('mobileInput');
+        const submitBtn = document.getElementById('submitBtn');
         let isProcessingInput = false;
         let activeInputMethod = null; // Track which method is active
 
-        // Simplified input handler - only one method active at a time
+        // Enhanced input handler that handles ENTER key and special characters
         function handleMobileInput(value, source) {
             if (isProcessingInput || !value) return;
             isProcessingInput = true;
@@ -664,7 +668,33 @@
                 return;
             }
 
-            // Process each character (filter out duplicates)
+            // Handle ENTER key (check for enter key or newline)
+            if (value.includes('\n') || value.toLowerCase().includes('enter')) {
+                handleKeyPress('ENTER');
+                // Clear the input after processing
+                if (source === 'input') {
+                    mobileKeyboardInput.value = '';
+                } else if (source === 'contenteditable') {
+                    mobileInputDiv.textContent = '';
+                }
+                isProcessingInput = false;
+                return;
+            }
+
+            // Handle BACKSPACE (check for backspace key)
+            if (value.includes('\b') || value.toLowerCase().includes('backspace')) {
+                handleKeyPress('BACKSPACE');
+                // Clear the input after processing
+                if (source === 'input') {
+                    mobileKeyboardInput.value = '';
+                } else if (source === 'contenteditable') {
+                    mobileInputDiv.textContent = '';
+                }
+                isProcessingInput = false;
+                return;
+            }
+
+            // Process each character (filter out duplicates and non-letters)
             const processedChars = new Set();
             for (let char of value) {
                 if (char.match(/[a-zA-Z]/i) && !processedChars.has(char.toUpperCase())) {
@@ -720,11 +750,15 @@
         document.addEventListener('DOMContentLoaded', () => {
             const gameBoard = document.getElementById('gameBoard');
             const mobileTypeBtn = document.getElementById('mobileTypeBtn');
+            const submitBtn = document.getElementById('submitBtn');
 
-            // Show mobile type button on mobile devices
+            // Show mobile buttons on mobile devices
             if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
                 if (mobileTypeBtn) {
                     mobileTypeBtn.style.display = 'block';
+                }
+                if (submitBtn) {
+                    submitBtn.style.display = 'block';
                 }
             }
 
