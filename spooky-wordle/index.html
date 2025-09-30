@@ -109,18 +109,7 @@
                 font-size: 1.2rem;
             }
 
-            /* Hide custom keyboard on mobile - use native keyboard instead */
-            .keyboard {
-                display: none !important;
-                visibility: hidden !important;
-                opacity: 0 !important;
-                position: absolute !important;
-                left: -9999px !important;
-                top: -9999px !important;
-                width: 0 !important;
-                height: 0 !important;
-                overflow: hidden !important;
-            }
+
 
             .game-container {
                 gap: 15px;
@@ -219,57 +208,7 @@
             color: white;
         }
         
-        .keyboard {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            margin-top: 20px;
-        }
-        
-        .keyboard-row {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-        }
-        
-        .key {
-            padding: 10px 15px;
-            border: 2px solid #444;
-            background: rgba(255, 255, 255, 0.1);
-            color: #ff6b6b;
-            cursor: pointer;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            min-width: 40px;
-            text-align: center;
-        }
-        
-        .key:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .key.wide {
-            padding: 10px 25px;
-        }
-        
-        .key.correct {
-            background: #4caf50;
-            border-color: #4caf50;
-            color: white;
-        }
-        
-        .key.present {
-            background: #ff9800;
-            border-color: #ff9800;
-            color: white;
-        }
-        
-        .key.absent {
-            background: #666;
-            border-color: #666;
-            color: white;
-        }
+
         
         .message {
             text-align: center;
@@ -373,8 +312,11 @@
     </div>
     
     <div class="game-container">
+        <!-- Hidden input to trigger mobile keyboard -->
+        <input type="text" id="mobileKeyboard" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;" autocomplete="off" />
+
         <div class="game-board" id="gameBoard"></div>
-        
+
         <div class="message" id="message"></div>
         
         <div class="flag" id="flag">
@@ -389,42 +331,7 @@
 
 
         
-        <div class="keyboard">
-            <div class="keyboard-row">
-                <div class="key" data-key="Q">Q</div>
-                <div class="key" data-key="W">W</div>
-                <div class="key" data-key="E">E</div>
-                <div class="key" data-key="R">R</div>
-                <div class="key" data-key="T">T</div>
-                <div class="key" data-key="Y">Y</div>
-                <div class="key" data-key="U">U</div>
-                <div class="key" data-key="I">I</div>
-                <div class="key" data-key="O">O</div>
-                <div class="key" data-key="P">P</div>
-            </div>
-            <div class="keyboard-row">
-                <div class="key" data-key="A">A</div>
-                <div class="key" data-key="S">S</div>
-                <div class="key" data-key="D">D</div>
-                <div class="key" data-key="F">F</div>
-                <div class="key" data-key="G">G</div>
-                <div class="key" data-key="H">H</div>
-                <div class="key" data-key="J">J</div>
-                <div class="key" data-key="K">K</div>
-                <div class="key" data-key="L">L</div>
-            </div>
-            <div class="keyboard-row">
-                <div class="key wide" data-key="ENTER">ENTER</div>
-                <div class="key" data-key="Z">Z</div>
-                <div class="key" data-key="X">X</div>
-                <div class="key" data-key="C">C</div>
-                <div class="key" data-key="V">V</div>
-                <div class="key" data-key="B">B</div>
-                <div class="key" data-key="N">N</div>
-                <div class="key" data-key="M">M</div>
-                <div class="key wide" data-key="BACKSPACE">⌫</div>
-            </div>
-        </div>
+
     </div>
 
     <script>
@@ -544,31 +451,14 @@
                 }
             });
             
-            // Update keyboard colors
-            updateKeyboardColors();
+
             
             if (gameWon) {
                 document.getElementById('flag').style.display = 'block';
             }
         }
         
-        // Update keyboard colors based on guesses
-        function updateKeyboardColors() {
-            gameState.guesses.forEach(guess => {
-                if (guess.classes.includes('correct') || guess.classes.includes('present') || guess.classes.includes('absent')) {
-                    const key = document.querySelector(`[data-key="${guess.letter}"]`);
-                    if (key) {
-                        if (guess.classes.includes('correct')) {
-                            key.classList.add('correct');
-                        } else if (guess.classes.includes('present')) {
-                            key.classList.add('present');
-                        } else if (guess.classes.includes('absent')) {
-                            key.classList.add('absent');
-                        }
-                    }
-                }
-            });
-        }
+
         
         // Handle keyboard input
         function handleKeyPress(key) {
@@ -631,17 +521,13 @@
             // Update cell colors
             for (let col = 0; col < 5; col++) {
                 const cell = document.getElementById(`cell-${currentRow}-${col}`);
-                const key = document.querySelector(`[data-key="${guess[col]}"]`);
-                
+
                 if (result[col] === 'correct') {
                     cell.classList.add('correct');
-                    key.classList.add('correct');
                 } else if (result[col] === 'present') {
                     cell.classList.add('present');
-                    key.classList.add('present');
                 } else {
                     cell.classList.add('absent');
-                    key.classList.add('absent');
                 }
             }
             
@@ -728,10 +614,7 @@
                 cell.classList.remove('filled', 'correct', 'present', 'absent');
             });
             
-            // Clear keyboard colors
-            document.querySelectorAll('.key').forEach(key => {
-                key.classList.remove('correct', 'present', 'absent');
-            });
+
             
             document.getElementById('flag').style.display = 'none';
             showMessage('🧹 Game cleared! Start fresh!', '');
@@ -748,13 +631,39 @@
             }
         });
 
-        // Virtual keyboard (desktop only)
-        document.querySelectorAll('.key').forEach(key => {
-            key.addEventListener('click', () => {
-                const keyValue = key.getAttribute('data-key');
-                handleKeyPress(keyValue);
-            });
+        // Mobile keyboard input handling
+        const mobileKeyboardInput = document.getElementById('mobileKeyboard');
+        mobileKeyboardInput.addEventListener('input', (e) => {
+            const value = e.target.value;
+            if (value) {
+                // Process each character
+                for (let char of value) {
+                    if (char.match(/[a-zA-Z]/i)) {
+                        handleKeyPress(char.toUpperCase());
+                    }
+                }
+                // Clear the input after processing
+                e.target.value = '';
+            }
         });
+
+        // Focus mobile keyboard input when user interacts with game
+        function focusMobileKeyboard() {
+            if (/Mobi|Android/i.test(navigator.userAgent)) {
+                mobileKeyboardInput.focus();
+            }
+        }
+
+        // Add touch/click handlers to game board to trigger mobile keyboard
+        document.addEventListener('DOMContentLoaded', () => {
+            const gameBoard = document.getElementById('gameBoard');
+            if (gameBoard) {
+                gameBoard.addEventListener('click', focusMobileKeyboard);
+                gameBoard.addEventListener('touchstart', focusMobileKeyboard);
+            }
+        });
+
+
         
         // Initialize game
         async function initializeGame() {
