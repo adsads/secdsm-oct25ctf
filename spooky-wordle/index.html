@@ -301,7 +301,7 @@
         <a href="../index.html" class="back-link">← Back to Challenges</a>
         <h1>🔤 Spooky Wordle</h1>
         <div class="subtitle">Guess the Halloween word in 6 tries!</div>
-        <div style="font-size: 0.8rem; color: #888; margin-top: 5px;">v2.1 - Keyboard Fixed</div>
+        <div style="font-size: 0.8rem; color: #888; margin-top: 5px;">v2.2 - Keyboard Fixed</div>
     </div>
     
     <div class="instructions">
@@ -638,49 +638,50 @@
             }
         });
 
-        // Mobile keyboard input handling
+        // Mobile keyboard input handling - Simplified for iOS
         const mobileKeyboardInput = document.getElementById('mobileKeyboard');
         const mobileInputDiv = document.getElementById('mobileInput');
         let isProcessingInput = false;
+        let activeInputMethod = null; // Track which method is active
 
-        // Handle input from hidden input field
-        mobileKeyboardInput.addEventListener('input', (e) => {
-            if (isProcessingInput) return;
+        // Simplified input handler - only one method active at a time
+        function handleMobileInput(value, source) {
+            if (isProcessingInput || !value) return;
             isProcessingInput = true;
 
-            const value = e.target.value;
-            if (value) {
-                // Process each character
-                for (let char of value) {
-                    if (char.match(/[a-zA-Z]/i)) {
-                        handleKeyPress(char.toUpperCase());
-                    }
+            // Only process if this is from the active method
+            if (activeInputMethod && source !== activeInputMethod) {
+                isProcessingInput = false;
+                return;
+            }
+
+            // Process each character (filter out duplicates)
+            const processedChars = new Set();
+            for (let char of value) {
+                if (char.match(/[a-zA-Z]/i) && !processedChars.has(char.toUpperCase())) {
+                    handleKeyPress(char.toUpperCase());
+                    processedChars.add(char.toUpperCase());
                 }
-                // Clear the input after processing
-                e.target.value = '';
+            }
+
+            // Clear the input after processing
+            if (source === 'input') {
+                mobileKeyboardInput.value = '';
+            } else if (source === 'contenteditable') {
+                mobileInputDiv.textContent = '';
             }
 
             isProcessingInput = false;
+        }
+
+        // Handle input from hidden input field
+        mobileKeyboardInput.addEventListener('input', (e) => {
+            handleMobileInput(e.target.value, 'input');
         });
 
         // Handle input from contenteditable div (better for iOS)
         mobileInputDiv.addEventListener('input', (e) => {
-            if (isProcessingInput) return;
-            isProcessingInput = true;
-
-            const text = e.target.textContent || '';
-            if (text) {
-                // Process each character
-                for (let char of text) {
-                    if (char.match(/[a-zA-Z]/i)) {
-                        handleKeyPress(char.toUpperCase());
-                    }
-                }
-                // Clear the content after processing
-                e.target.textContent = '';
-            }
-
-            isProcessingInput = false;
+            handleMobileInput(e.target.textContent || '', 'contenteditable');
         });
 
         // Focus mobile keyboard input when user interacts with game
@@ -691,14 +692,18 @@
             if (isIOS) {
                 // Try contenteditable first for iOS
                 mobileInputDiv.focus();
+                activeInputMethod = 'contenteditable';
+
                 // Fallback to input if contenteditable doesn't work
                 setTimeout(() => {
                     if (document.activeElement !== mobileInputDiv) {
                         mobileKeyboardInput.focus();
+                        activeInputMethod = 'input';
                     }
                 }, 100);
             } else if (isAndroid) {
                 mobileKeyboardInput.focus();
+                activeInputMethod = 'input';
             }
         }
 
