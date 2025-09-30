@@ -641,9 +641,13 @@
         // Mobile keyboard input handling
         const mobileKeyboardInput = document.getElementById('mobileKeyboard');
         const mobileInputDiv = document.getElementById('mobileInput');
+        let isProcessingInput = false;
 
         // Handle input from hidden input field
         mobileKeyboardInput.addEventListener('input', (e) => {
+            if (isProcessingInput) return;
+            isProcessingInput = true;
+
             const value = e.target.value;
             if (value) {
                 // Process each character
@@ -655,10 +659,15 @@
                 // Clear the input after processing
                 e.target.value = '';
             }
+
+            isProcessingInput = false;
         });
 
         // Handle input from contenteditable div (better for iOS)
         mobileInputDiv.addEventListener('input', (e) => {
+            if (isProcessingInput) return;
+            isProcessingInput = true;
+
             const text = e.target.textContent || '';
             if (text) {
                 // Process each character
@@ -670,6 +679,8 @@
                 // Clear the content after processing
                 e.target.textContent = '';
             }
+
+            isProcessingInput = false;
         });
 
         // Focus mobile keyboard input when user interacts with game
