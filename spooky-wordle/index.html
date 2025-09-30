@@ -313,12 +313,15 @@
     
     <div class="game-container">
         <!-- Hidden input to trigger mobile keyboard -->
-        <input type="text" id="mobileKeyboard" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;" autocomplete="off" />
+        <input type="text" id="mobileKeyboard" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none; width: 1px; height: 1px; font-size: 16px;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
 
         <div class="game-board" id="gameBoard"></div>
 
         <div class="message" id="message"></div>
-        
+
+        <!-- Mobile keyboard trigger button -->
+        <button id="mobileTypeBtn" onclick="focusMobileKeyboard()" style="display: none; background: rgba(255, 255, 255, 0.1); border: 2px solid #ff6b6b; color: #ff6b6b; padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; margin: 10px 0;">📱 Tap to Type</button>
+
         <div class="flag" id="flag">
             <h3>🎉 Congratulations! You found the flag! 🎉</h3>
             <p><strong>Flag:</strong> <code>SecDSM{spooky_wordle_master_2025}</code></p>
@@ -657,6 +660,15 @@
         // Add touch/click handlers to game board to trigger mobile keyboard
         document.addEventListener('DOMContentLoaded', () => {
             const gameBoard = document.getElementById('gameBoard');
+            const mobileTypeBtn = document.getElementById('mobileTypeBtn');
+
+            // Show mobile type button on mobile devices
+            if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+                if (mobileTypeBtn) {
+                    mobileTypeBtn.style.display = 'block';
+                }
+            }
+
             if (gameBoard) {
                 gameBoard.addEventListener('click', focusMobileKeyboard);
                 gameBoard.addEventListener('touchstart', focusMobileKeyboard);
