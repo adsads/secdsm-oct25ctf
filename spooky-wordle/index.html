@@ -301,6 +301,7 @@
         <a href="../index.html" class="back-link">← Back to Challenges</a>
         <h1>🔤 Spooky Wordle</h1>
         <div class="subtitle">Guess the Halloween word in 6 tries!</div>
+        <div style="font-size: 0.8rem; color: #888; margin-top: 5px;">v2.0 - Keyboard Fixed</div>
     </div>
     
     <div class="instructions">
@@ -313,7 +314,10 @@
     
     <div class="game-container">
         <!-- Hidden input to trigger mobile keyboard -->
-        <input type="text" id="mobileKeyboard" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none; width: 1px; height: 1px; font-size: 16px;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <input type="text" id="mobileKeyboard" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none; width: 1px; height: 1px; font-size: 16px; z-index: 9999;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+
+        <!-- Alternative contenteditable for iOS -->
+        <div id="mobileInput" contenteditable="true" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none; width: 1px; height: 1px; font-size: 16px; z-index: 9998; outline: none; -webkit-user-select: text;" inputmode="text"></div>
 
         <div class="game-board" id="gameBoard"></div>
 
@@ -636,6 +640,9 @@
 
         // Mobile keyboard input handling
         const mobileKeyboardInput = document.getElementById('mobileKeyboard');
+        const mobileInputDiv = document.getElementById('mobileInput');
+
+        // Handle input from hidden input field
         mobileKeyboardInput.addEventListener('input', (e) => {
             const value = e.target.value;
             if (value) {
@@ -650,9 +657,36 @@
             }
         });
 
+        // Handle input from contenteditable div (better for iOS)
+        mobileInputDiv.addEventListener('input', (e) => {
+            const text = e.target.textContent || '';
+            if (text) {
+                // Process each character
+                for (let char of text) {
+                    if (char.match(/[a-zA-Z]/i)) {
+                        handleKeyPress(char.toUpperCase());
+                    }
+                }
+                // Clear the content after processing
+                e.target.textContent = '';
+            }
+        });
+
         // Focus mobile keyboard input when user interacts with game
         function focusMobileKeyboard() {
-            if (/Mobi|Android/i.test(navigator.userAgent)) {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/i.test(navigator.userAgent);
+
+            if (isIOS) {
+                // Try contenteditable first for iOS
+                mobileInputDiv.focus();
+                // Fallback to input if contenteditable doesn't work
+                setTimeout(() => {
+                    if (document.activeElement !== mobileInputDiv) {
+                        mobileKeyboardInput.focus();
+                    }
+                }, 100);
+            } else if (isAndroid) {
                 mobileKeyboardInput.focus();
             }
         }
