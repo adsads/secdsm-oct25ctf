@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spooky Mastermind 🔮</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <a href="../index.html" class="back-btn">← Back to Main Page</a>
+            </div>
+            <h1>🎃 Spooky Mastermind 🔮</h1>
+            <p class="instructions">Guess the 4-emoji secret code! You have 10 attempts.</p>
+        </header>
+
+        <div class="game-info">
+            <div class="attempts">Attempts: <span id="attempt-count">0</span>/10</div>
+            <div class="game-status" id="game-status"></div>
+        </div>
+
+        <div class="emoji-palette">
+            <h3>Choose your emojis:</h3>
+            <div class="emoji-buttons" id="emoji-buttons">
+                <!-- Emojis will be added here by JavaScript -->
+            </div>
+        </div>
+
+        <div class="current-guess">
+            <h3>Your guess:</h3>
+            <div class="guess-slots" id="guess-slots">
+                <!-- Current guess slots will be added here -->
+            </div>
+            <button id="submit-guess" class="submit-btn" disabled>Submit Guess</button>
+            <button id="clear-guess" class="clear-btn">Clear</button>
+        </div>
+
+        <div class="legend">
+            <h3>Legend:</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="feedback-peg correct"></div>
+                    <span>Correct emoji in correct position</span>
+                </div>
+                <div class="legend-item">
+                    <div class="feedback-peg wrong-position"></div>
+                    <span>Correct emoji in wrong position</span>
+                </div>
+                <div class="legend-item">
+                    <div class="feedback-peg incorrect"></div>
+                    <span>Incorrect emoji</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="guess-history">
+            <h3>Previous guesses:</h3>
+            <div class="history-container" id="history-container">
+                <!-- Guess history will be added here -->
+            </div>
+        </div>
+
+        <div class="win-message" id="win-message" style="display: none;">
+            <h2>🎉 Congratulations! 🎉</h2>
+            <p>You cracked the code!</p>
+            <div class="flag">CTF Flag: <span id="ctf-flag"></span></div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
