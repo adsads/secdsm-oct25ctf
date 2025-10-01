@@ -77,6 +77,57 @@
       .row-clues{gap:3px}
     }
 
+    /* Enhanced mobile responsiveness */
+    @media (max-width:480px){
+      :root{
+        --cell-size:calc(min(8.5vmin, 28px));
+        --gap:2px;
+      }
+      body{padding:8px;}
+      header{gap:8px; margin-bottom:8px;}
+      header h1{font-size:1rem;}
+      header p{font-size:0.8rem;}
+      .top-controls{gap:6px;}
+      button.btn{padding:6px 10px; font-size:0.9rem;}
+      .clue-grid{gap:4px;}
+      .col-clues{padding-left:3px;}
+      .row-clues{padding-top:3px;}
+      .grid-container{padding:4px;}
+      .grid{padding:4px;}
+      .stats{gap:6px; justify-content:center;}
+      .stat{min-width:70px; padding:4px 6px;}
+      .stat b{font-size:0.9rem;}
+    }
+
+    /* Very small screens */
+    @media (max-width:360px){
+      :root{
+        --cell-size:calc(min(8vmin, 24px));
+        --gap:1px;
+      }
+      body{padding:6px;}
+      header{gap:6px; margin-bottom:6px;}
+      header h1{font-size:0.95rem;}
+      header p{font-size:0.75rem;}
+      .top-controls{gap:4px;}
+      button.btn{padding:5px 8px; font-size:0.85rem;}
+      .clue-grid{gap:2px;}
+      .col-clues{padding-left:2px;}
+      .row-clues{padding-top:2px;}
+      .grid-container{padding:3px;}
+      .grid{padding:3px;}
+      .stats{gap:4px;}
+      .stat{min-width:60px; padding:3px 5px;}
+      .stat b{font-size:0.85rem;}
+    }
+
+    /* Landscape orientation on mobile */
+    @media (max-width:680px) and (orientation:landscape){
+      :root{--cell-size:calc(min(6vmin, 32px));}
+      body{padding:6px;}
+      .clue-grid{gap:2px;}
+    }
+
   </style>
 </head>
 <body>
